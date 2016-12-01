@@ -23,8 +23,8 @@ namespace AdventOfCode2016.Days
         /// <returns></returns>
         private void GetInput()
         {
-            input = File.ReadAllText("input\\day" + Number + ".txt");
-            inputLines = File.ReadAllLines("input\\day" + Number + ".txt").ToList();
+            input = File.ReadAllText("Input\\day" + Number + ".txt");
+            inputLines = File.ReadAllLines("Input\\day" + Number + ".txt").ToList();
         }
 
         public virtual string GetSolutionPart1()
