@@ -141,10 +141,7 @@ namespace AdventOfCode2016.Days
 						string solution = numbers.Sum(Math.Abs).ToString();
 						return solution;
 					}
-					else
-					{
-						visitedLocations.Add(s);
-					}
+					visitedLocations.Add(s);
 				}
 				
 			}
