@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Days\Day.cs" />
+    <Compile Include="Days\Day3.cs" />
     <Compile Include="Days\Day2.cs" />
     <Compile Include="Days\Day1.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
@@ -55,6 +56,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Input\day3.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Input\day2.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
