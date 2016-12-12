@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using AdventOfCode2016.Extensions;
 
@@ -16,6 +17,8 @@ namespace AdventOfCode2016.Days
 			public int SectorId;
 			public string Checksum;
 
+			private static StringBuilder stringBuilder = new StringBuilder();
+
 			private string CreateChecksum()
 			{
 				var lettersByOccurence = Name.Replace("-", "").GroupBy(c => c)
@@ -24,6 +27,48 @@ namespace AdventOfCode2016.Days
 												.ToDictionary(grp => grp.Key, grp => grp.Count());
 				var checksum = string.Join("", lettersByOccurence.Select(l => l.Key).ToList().Take(5));
 				return checksum;
+			}
+
+			//^\w{5}-\w{4}-\w{7}
+
+			private static char RotateLetter(char c, int amount)
+			{
+				if (c == 'z')
+				{
+					return 'a';
+				}
+				amount %= 26;
+
+				for (int i = 0; i < amount; i++)
+				{
+					c = IncrementLetter(c);
+				}
+				return c;
+			}
+
+			private static char IncrementLetter(char c)
+			{
+				if (c == 'z')
+				{
+					return 'a';
+				}
+				c++;
+				return c;
+			}
+
+			public string DecryptName()
+			{
+				stringBuilder.Clear();
+				foreach (char c in Name)
+				{
+					if (c == '-')
+					{
+						stringBuilder.Append(c);
+						continue;
+					}
+					stringBuilder.Append(RotateLetter(c, SectorId));
+				}
+				return stringBuilder.ToString(); //some names have a single wrong letter in them, not sure why yet. But it worked well enough to find the right room, so debugging is postponed.
 			}
 
 			public bool IsValid()
@@ -62,6 +107,10 @@ namespace AdventOfCode2016.Days
 
 		public override string GetSolutionPart2()
 		{
+			var decryptedNames = rooms.Select(r => r.DecryptName()).ToList();
+			var sector = rooms.Single(r => r.DecryptName().StartsWith("northpole")).SectorId;
+
+			
 			return base.GetSolutionPart2();
 		}
 	}
