@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using AdventOfCode2016.Extensions;
 
 namespace AdventOfCode2016.Days

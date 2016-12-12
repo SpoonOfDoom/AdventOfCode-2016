@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using AdventOfCode2016.Extensions;
 
 namespace AdventOfCode2016.Days
