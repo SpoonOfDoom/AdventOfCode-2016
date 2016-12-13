@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using AdventOfCode2016.Extensions;
 using Priority_Queue;
 
@@ -125,6 +126,12 @@ namespace AdventOfCode2016.Days
 			Console.ForegroundColor = ConsoleColor.White;
 		}
 
+		private void DrawMap(Coordinate start, Coordinate current, SimplePriorityQueue<Coordinate> openList, HashSet<Coordinate> closed)
+		{
+			Coordinate dummy = new Coordinate() {x = int.MaxValue, y = int.MaxValue};
+			DrawMap(start, dummy, current, openList, closed);
+		}
+
 		private void DrawMap(Coordinate start, Coordinate target, Coordinate current, SimplePriorityQueue<Coordinate> openList, HashSet<Coordinate> closed)
 		{
 			Console.Clear();
@@ -188,7 +195,7 @@ namespace AdventOfCode2016.Days
 			}
 		}
 
-		private int FindPath(Coordinate start, Coordinate target)
+		private int FindPath(Coordinate start, Coordinate target, bool manual = true, int autoStepTime = 10)
 		{
 			var closed = new HashSet<Coordinate>();
 			var openList = new SimplePriorityQueue<Coordinate>();
@@ -210,9 +217,16 @@ namespace AdventOfCode2016.Days
 				DrawMap(start, target, current, openList, closed);
 				var newNodes = ExpandNode(current);
 				int newCost = nodeCostLookup[current] + 1;
-				
 
-				Console.ReadLine();
+				if (manual)
+				{
+					Console.ReadLine();
+				}
+				else
+				{
+					Thread.Sleep(autoStepTime);
+				}
+				
 				foreach (var node in newNodes)
 				{
 					if (closed.Contains(node))
@@ -236,13 +250,69 @@ namespace AdventOfCode2016.Days
 			return -1;
 		}
 
+		private int FindRange(Coordinate start, int maxSteps, bool manual = true, int autoStepTime = 10)
+		{
+			var closed = new HashSet<Coordinate>();
+			var openList = new SimplePriorityQueue<Coordinate>();
+			HashSet<Coordinate> visitedLocations = new HashSet<Coordinate>();
+			nodeCostLookup[start] = 0;
+			openList.Enqueue(start, 0);
+			isWallLookup[start] = false;
+
+
+			while (openList.Count > 0)
+			{
+
+				var current = openList.Dequeue();
+				closed.Add(current);
+				if (nodeCostLookup[current] <= maxSteps)
+				{
+					visitedLocations.Add(current);
+				}
+
+				DrawMap(start, current, openList, closed);
+				
+				int newCost = nodeCostLookup[current] + 1;
+				var newNodes = ExpandNode(current);
+
+				if (manual)
+				{
+					Console.ReadLine();
+				}
+				else
+				{
+					Thread.Sleep(autoStepTime);
+				}
+
+				if (newCost > maxSteps)
+				{
+					continue;
+				}
+				foreach (var node in newNodes)
+				{
+					if (closed.Contains(node))
+					{
+						continue;
+					}
+					if (openList.Contains(node))
+					{
+						continue;
+					}
+					nodeCostLookup[node] = newCost;
+					openList.Enqueue(node, 1);
+				}
+			}
+
+			return visitedLocations.Count;
+		}
+
 		public override string GetSolutionPart1()
 		{
 			//What is the fewest number of steps required for you to reach 31,39?
 			var start = new Coordinate { x = 1, y = 1 };
 			var target = new Coordinate { x = 31, y = 39 };
 			//target = new Coordinate { x = 7, y = 4 };
-			var pathCost = FindPath(start, target);
+			var pathCost = FindPath(start, target, manual:false);
 
 			if (pathCost == -1)
 			{
@@ -254,7 +324,10 @@ namespace AdventOfCode2016.Days
 
 		public override string GetSolutionPart2()
 		{
-			return base.GetSolutionPart2();
+			var start = new Coordinate { x = 1, y = 1 };
+			int steps = 50;
+			var tiles = FindRange(start, steps, manual:false);
+			return tiles.ToString();
 		}
 	}
 }
