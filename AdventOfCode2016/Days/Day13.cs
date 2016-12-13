@@ -17,11 +17,6 @@ namespace AdventOfCode2016.Days
 			public int y;
 		}
 
-		private struct PathNode
-		{
-			public Coordinate Coordinate;
-		}
-
 		private Dictionary<Coordinate, bool> isWallLookup = new Dictionary<Coordinate, bool>();
 		private Dictionary<Coordinate, int> nodeCostLookup = new Dictionary<Coordinate, int>();
 		private Dictionary<Coordinate, int> nodeHeuristicLookup = new Dictionary<Coordinate, int>();
@@ -74,7 +69,7 @@ namespace AdventOfCode2016.Days
 		}
 
 		/// <summary>
-		/// Returns all legal moves from the node. Does *not* check closed or open list if they already exist!
+		/// Returns all legal moves from the node.
 		/// </summary>
 		/// <param name="node"></param>
 		/// <returns></returns>
@@ -115,7 +110,7 @@ namespace AdventOfCode2016.Days
 			return nodes;
 		}
 
-		private void ConsoleWithColor(object content, ConsoleColor bgcolor = ConsoleColor.Black, ConsoleColor fgColor = ConsoleColor.White)
+		private static void ConsoleWithColor(object content, ConsoleColor bgcolor = ConsoleColor.Black, ConsoleColor fgColor = ConsoleColor.White)
 		{
 			Console.BackgroundColor = bgcolor;
 			Console.ForegroundColor = fgColor;
@@ -126,28 +121,24 @@ namespace AdventOfCode2016.Days
 			Console.ForegroundColor = ConsoleColor.White;
 		}
 
+		//Lazy way to draw without specifying a target Coordinate.
 		private void DrawMap(Coordinate start, Coordinate current, SimplePriorityQueue<Coordinate> openList, HashSet<Coordinate> closed)
 		{
-			Coordinate dummy = new Coordinate() {x = int.MaxValue, y = int.MaxValue};
+			var dummy = new Coordinate() {x = int.MaxValue, y = int.MaxValue};
 			DrawMap(start, dummy, current, openList, closed);
 		}
 
 		private void DrawMap(Coordinate start, Coordinate target, Coordinate current, SimplePriorityQueue<Coordinate> openList, HashSet<Coordinate> closed)
 		{
-			Console.Clear();
-			Console.WriteLine("Legend - Free:. Wall:X Start:S Target:T Closed:+ Open:o Next:N");
+			Console.CursorLeft = 0;
+			Console.CursorTop = 0;
+			Console.WriteLine("Legend - Free:. Wall:X Start:S Target:T Closed:c Open:o Current:G");
 
 			int maxX = isWallLookup.Keys.Max(t => t.x);
 			int maxY = isWallLookup.Keys.Max(t => t.y);
-			Console.Write(" ");
-			//for (int i = 0; i < maxX; i++)
-			//{
-			//	Console.Write(i);
-			//}
 			for (int y = 0; y <= maxY; y++)
 			{
 				Console.WriteLine();
-				//Console.Write(y);
 				for (int x = 0; x <= maxX; x++)
 				{
 					Coordinate c = new Coordinate() {x = x, y = y};
@@ -155,10 +146,6 @@ namespace AdventOfCode2016.Days
 					{
 						ConsoleWithColor("G", fgColor: ConsoleColor.Magenta);
 					}
-					//else if (openList.Count > 0 && c.Equals(openList.First))
-					//{
-					//	ConsoleWithColor("N", fgColor: ConsoleColor.Blue);
-					//}
 					else if (c.Equals(start))
 					{
 						ConsoleWithColor("S", fgColor: ConsoleColor.Cyan);
@@ -195,7 +182,7 @@ namespace AdventOfCode2016.Days
 			}
 		}
 
-		private int FindPath(Coordinate start, Coordinate target, bool manual = true, int autoStepTime = 10)
+		private int FindPath(Coordinate start, Coordinate target, bool manual = true, int autoStepTime = 200)
 		{
 			var closed = new HashSet<Coordinate>();
 			var openList = new SimplePriorityQueue<Coordinate>();
@@ -203,7 +190,6 @@ namespace AdventOfCode2016.Days
 			openList.Enqueue(start, 0);
 			isWallLookup[start] = false;
 			
-
 			while (openList.Count > 0)
 			{
 
@@ -258,8 +244,7 @@ namespace AdventOfCode2016.Days
 			nodeCostLookup[start] = 0;
 			openList.Enqueue(start, 0);
 			isWallLookup[start] = false;
-
-
+			
 			while (openList.Count > 0)
 			{
 
@@ -308,11 +293,9 @@ namespace AdventOfCode2016.Days
 
 		public override string GetSolutionPart1()
 		{
-			//What is the fewest number of steps required for you to reach 31,39?
 			var start = new Coordinate { x = 1, y = 1 };
 			var target = new Coordinate { x = 31, y = 39 };
-			//target = new Coordinate { x = 7, y = 4 };
-			var pathCost = FindPath(start, target, manual:false);
+			int pathCost = FindPath(start, target, manual:false);
 
 			if (pathCost == -1)
 			{
@@ -326,7 +309,7 @@ namespace AdventOfCode2016.Days
 		{
 			var start = new Coordinate { x = 1, y = 1 };
 			int steps = 50;
-			var tiles = FindRange(start, steps, manual:false);
+			int tiles = FindRange(start, steps, manual:false);
 			return tiles.ToString();
 		}
 	}
