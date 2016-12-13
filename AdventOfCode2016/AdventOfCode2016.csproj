@@ -33,6 +33,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942">
+      <HintPath>..\packages\BouncyCastle.1.8.1\lib\BouncyCastle.Crypto.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -44,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Days\Day.cs" />
+    <Compile Include="Days\Day13.cs" />
     <Compile Include="Days\Day5.cs" />
     <Compile Include="Days\Day4.cs" />
     <Compile Include="Days\Day3.cs" />
@@ -58,8 +63,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Input\day13.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Input\day5.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
