@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Days\Day.cs" />
+    <Compile Include="Days\GuineaPig13.cs" />
     <Compile Include="Days\Day15.cs" />
     <Compile Include="Days\Day14.cs" />
     <Compile Include="Days\Day13.cs" />
@@ -67,6 +68,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Toolbox.cs" />
+    <Compile Include="Tools\AStar.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

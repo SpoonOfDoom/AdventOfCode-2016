@@ -12,7 +12,7 @@ namespace AdventOfCode2016
 			Stopwatch sw = new Stopwatch();
 			try
 			{
-				d = new Day15();
+				d = new GuineaPig13();
 			}
 			catch (Exception ex)
 			{
