@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AdventOfCode2016.Extensions
+﻿namespace AdventOfCode2016.Extensions
 {
     public static class CharExtensions
     {
