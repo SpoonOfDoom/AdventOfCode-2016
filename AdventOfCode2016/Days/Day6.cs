@@ -8,11 +8,12 @@ namespace AdventOfCode2016.Days
         public Day6() : base(6) {}
         
         private Dictionary<int, Dictionary<char, int>> letterCount = new Dictionary<int, Dictionary<char, int>>();
+        private int messageLength;
 
         public override string GetSolutionPart1()
         {
-            int messageLength = inputLines[0].Length;
-            
+            messageLength = inputLines[0].Length;
+
             foreach (string line in inputLines)
             {
                 for (int j = 0; j < messageLength; j++)
@@ -50,7 +51,22 @@ namespace AdventOfCode2016.Days
 
         public override string GetSolutionPart2()
         {
-            return base.GetSolutionPart2();
+            Dictionary<int, char> correctChars = new Dictionary<int, char>();
+            int least = int.MaxValue;
+            for (int i = 0; i < messageLength; i++)
+            {
+                foreach (KeyValuePair<char, int> keyValuePair in letterCount[i])
+                {
+                    if (keyValuePair.Value < least)
+                    {
+                        correctChars[i] = keyValuePair.Key;
+                        least = keyValuePair.Value;
+                    }
+                }
+                least = int.MaxValue;
+            }
+            string result = string.Join("", correctChars.Values);
+            return result; //akothqli
         }
     }
 }
