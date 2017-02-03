@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using AdventOfCode2016.Extensions;
 using AdventOfCode2016.Tools;
@@ -89,6 +88,17 @@ namespace AdventOfCode2016.Days
             {
                 int heuristic = GetHeuristic(goalState as Coordinate);
                 return Cost + heuristic;
+            }
+
+            public string VerboseInfo { get; }
+            public bool IsGoalState(ISearchNode goalState = null)
+            {
+                throw new NotImplementedException();
+            }
+
+            float ISearchNode.GetHeuristic(ISearchNode goalState)
+            {
+                return GetHeuristic(goalState);
             }
         }
 
