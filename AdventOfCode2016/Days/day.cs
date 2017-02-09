@@ -81,7 +81,7 @@ namespace AdventOfCode2016.Days
         {
             if (dayInstance == null)
             {
-                Type dayType = Type.GetType("AdventOfCode.Days.Day" + number);
+                Type dayType = Type.GetType("AdventOfCode2016.Days.Day" + number);
                 dayInstance = (Day)Activator.CreateInstance(dayType);
             }
 
