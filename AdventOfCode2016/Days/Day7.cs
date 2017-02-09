@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2016.Days
@@ -8,6 +9,9 @@ namespace AdventOfCode2016.Days
         public Day7() : base(7) {}
         Regex regexAbbaInBrackets = new Regex(@"\[\w*((\w)(\w)\3\2)\w*\]");
         Regex regexAbba = new Regex(@"\w*((\w)(\w)\3\2)\w*");
+        Regex stuffInBrackets = new Regex(@"\[(\w+)\]");
+        Regex stuffOutsideBrackets = new Regex(@"(\w+)(\[|$)");
+        Regex abaRegex = new Regex(@"(?=(\w)(\w)\1)");
 
         private bool SupportsTls(string ip)
         {
@@ -38,6 +42,53 @@ namespace AdventOfCode2016.Days
             return false;
         }
 
+        private bool SupportsSsl(string ip)
+        {
+            var stringsInsideBrackets = new List<string>();
+            var stringsOutsideBrackets = new List<string>();
+
+            var matchesInside = stuffInBrackets.Matches(ip);
+            foreach (Match match in matchesInside)
+            {
+                stringsInsideBrackets.Add(match.Groups[1].Value);
+            }
+
+            var matchesOutside = stuffOutsideBrackets.Matches(ip);
+            foreach (Match match in matchesOutside)
+            {
+                stringsOutsideBrackets.Add(match.Groups[1].Value);
+            }
+
+            HashSet<string> babsToSearch = new HashSet<string>();
+            foreach (string outsideString in stringsOutsideBrackets)
+            {
+                var abaMatches = abaRegex.Matches(outsideString);
+                foreach (Match match in abaMatches)
+                {
+                    string aba = outsideString.Substring(match.Index, 3);
+                    if (aba[0] != aba[1])
+                    {
+                        string bab = ""+ aba[1] + aba[0] + aba[1];
+                        babsToSearch.Add(bab);
+                    }
+                }
+            }
+            
+            foreach (string bab in babsToSearch)
+            {
+                foreach (string insideString in stringsInsideBrackets)
+                {
+                    if (insideString.Contains(bab))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        
+
         public override string GetSolutionPart1()
         {
             int ipsWithTls = inputLines.Count(SupportsTls);
@@ -46,7 +97,8 @@ namespace AdventOfCode2016.Days
 
         public override string GetSolutionPart2()
         {
-            return base.GetSolutionPart2();
+            int ipsWithSsl = inputLines.Count(SupportsSsl);
+            return ipsWithSsl.ToString(); //260
         }
     }
 }
