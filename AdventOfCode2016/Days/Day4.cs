@@ -95,20 +95,20 @@ namespace AdventOfCode2016.Days
 			}
 		}
 		
-		public override string GetSolutionPart1()
+		public override object GetSolutionPart1()
 		{
 			ParseLines();
 			var realRooms = rooms.Where(r => r.IsValid());
-			return realRooms.Sum(r => r.SectorId).ToString();
+			return realRooms.Sum(r => r.SectorId);
 		}
 
-		public override string GetSolutionPart2()
+		public override object GetSolutionPart2()
 		{
 			var decryptedNames = rooms.Select(r => r.DecryptName()).ToList();
 			var sector = rooms.Single(r => r.DecryptName().StartsWith("northpole")).SectorId;
 
-			
-			return base.GetSolutionPart2();
+			//todo: find out if something's wrong here
+			return sector;
 		}
 	}
 }

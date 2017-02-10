@@ -291,7 +291,7 @@ namespace AdventOfCode2016.Days
 			return visitedLocations.Count;
 		}
 
-		public override string GetSolutionPart1()
+		public override object GetSolutionPart1()
 		{
 			var start = new Coordinate { x = 1, y = 1 };
 			var target = new Coordinate { x = 31, y = 39 };
@@ -305,7 +305,7 @@ namespace AdventOfCode2016.Days
 			return pathCost.ToString();
 		}
 
-		public override string GetSolutionPart2()
+		public override object GetSolutionPart2()
 		{
 			var start = new Coordinate { x = 1, y = 1 };
 			int steps = 50;

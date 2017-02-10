@@ -65,7 +65,7 @@ namespace AdventOfCode2016.Days
 		}
 
 
-		public override string GetSolutionPart1()
+		public override object GetSolutionPart1()
 		{
 			int x = 1;
 			int y = 1;
@@ -84,7 +84,7 @@ namespace AdventOfCode2016.Days
 			return string.Join("", buttons);
 		}
 
-		public override string GetSolutionPart2()
+		public override object GetSolutionPart2()
 		{
 			int x = 0;
 			int y = 2;

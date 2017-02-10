@@ -125,13 +125,13 @@ namespace AdventOfCode2016.Days
 			return passwordBuilder.ToString();
 		}
 
-		public override string GetSolutionPart1()
+		public override object GetSolutionPart1()
 		{
 			//"801b56a7";
 			return GetPassword();
 		}
 
-		public override string GetSolutionPart2()
+		public override object GetSolutionPart2()
 		{
 			//424a0197
 			return GetPassword2();

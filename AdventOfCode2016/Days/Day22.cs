@@ -4,12 +4,12 @@
     {
         public Day22() : base(22) {}
         
-        public override string GetSolutionPart1()
+        public override object GetSolutionPart1()
         {
             return base.GetSolutionPart1();
         }
 
-        public override string GetSolutionPart2()
+        public override object GetSolutionPart2()
         {
             return base.GetSolutionPart2();
         }

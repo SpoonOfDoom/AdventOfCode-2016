@@ -269,7 +269,7 @@ namespace AdventOfCode2016.Days
             return visitedLocations.Count;
         }
 
-        public override string GetSolutionPart1()
+        public override object GetSolutionPart1()
         {
             number = input.ToInt();
             var start = new Coordinate { x = 1, y = 1 };
@@ -284,7 +284,7 @@ namespace AdventOfCode2016.Days
             return pathCost.ToString();
         }
 
-        public override string GetSolutionPart2()
+        public override object GetSolutionPart2()
         {
             return base.GetSolutionPart2();
             var start = new Coordinate { x = 1, y = 1 };

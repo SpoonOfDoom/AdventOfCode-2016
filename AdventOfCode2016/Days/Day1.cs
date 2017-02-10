@@ -101,7 +101,7 @@ namespace AdventOfCode2016.Days
 			}
 		}
 
-		public override string GetSolutionPart1()
+		public override object GetSolutionPart1()
 		{
 			ParseInput();
 
@@ -116,10 +116,10 @@ namespace AdventOfCode2016.Days
 				Move(ref x, ref y, command.Blocks, facing);
 			}
 			int distance = x + y;
-			return distance.ToString();
+			return distance;
 		}
 
-		public override string GetSolutionPart2()
+		public override object GetSolutionPart2()
 		{
 			int x = 0;
 			int y = 0;
@@ -137,7 +137,7 @@ namespace AdventOfCode2016.Days
 					if (visitedLocations.Contains(s))
 					{
 						var numbers = s.Split('|').Select(c => int.Parse(c.ToString()));
-						string solution = numbers.Sum(Math.Abs).ToString();
+						int solution = numbers.Sum(Math.Abs);
 						return solution;
 					}
 					visitedLocations.Add(s);

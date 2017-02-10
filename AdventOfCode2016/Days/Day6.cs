@@ -10,7 +10,7 @@ namespace AdventOfCode2016.Days
         private Dictionary<int, Dictionary<char, int>> letterCount = new Dictionary<int, Dictionary<char, int>>();
         private int messageLength;
 
-        public override string GetSolutionPart1()
+        public override object GetSolutionPart1()
         {
             messageLength = inputLines[0].Length;
 
@@ -49,7 +49,7 @@ namespace AdventOfCode2016.Days
             return result; //qtbjqiuq
         }
 
-        public override string GetSolutionPart2()
+        public override object GetSolutionPart2()
         {
             Dictionary<int, char> correctChars = new Dictionary<int, char>();
             int least = int.MaxValue;

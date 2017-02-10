@@ -86,19 +86,17 @@ namespace AdventOfCode2016.Days
             }
             return false;
         }
-
         
-
-        public override string GetSolutionPart1()
+        public override object GetSolutionPart1()
         {
             int ipsWithTls = inputLines.Count(SupportsTls);
-            return ipsWithTls.ToString(); //118
+            return ipsWithTls; //118
         }
 
-        public override string GetSolutionPart2()
+        public override object GetSolutionPart2()
         {
             int ipsWithSsl = inputLines.Count(SupportsSsl);
-            return ipsWithSsl.ToString(); //260
+            return ipsWithSsl; //260
         }
     }
 }

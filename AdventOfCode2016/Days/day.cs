@@ -31,11 +31,11 @@ namespace AdventOfCode2016.Days
             inputLines = File.ReadAllLines("input\\day" + Number + ".txt").ToList();
         }
 
-        public virtual string GetSolutionPart1()
+        public virtual object GetSolutionPart1()
         {
             throw new NotImplementedException();
         }
-        public virtual string GetSolutionPart2()
+        public virtual object GetSolutionPart2()
         {
             throw new NotImplementedException();
         }
@@ -94,7 +94,7 @@ namespace AdventOfCode2016.Days
             try
             {
                 sw.Start();
-                solution1 = dayInstance.GetSolutionPart1();
+                solution1 = dayInstance.GetSolutionPart1().ToString();
                 sw.Stop();
                 part1Time = sw.Elapsed;
                 totalTime += sw.Elapsed;
@@ -113,7 +113,7 @@ namespace AdventOfCode2016.Days
             try
             {
                 sw.Restart();
-                solution2 = dayInstance.GetSolutionPart2();
+                solution2 = dayInstance.GetSolutionPart2().ToString();
                 sw.Stop();
                 part2Time = sw.Elapsed;
                 totalTime += sw.Elapsed;

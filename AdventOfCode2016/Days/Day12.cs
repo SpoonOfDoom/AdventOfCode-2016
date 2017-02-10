@@ -52,13 +52,13 @@ namespace AdventOfCode2016.Days
 			}
 		}
 		
-		public override string GetSolutionPart1()
+		public override object GetSolutionPart1()
 		{
 			ExecuteInstructions();
 			return registers["a"].ToString();
 		}
 
-		public override string GetSolutionPart2()
+		public override object GetSolutionPart2()
 		{
 			registers = new Dictionary<string, int>
 			{

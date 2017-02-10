@@ -86,19 +86,19 @@ namespace AdventOfCode2016.Days
 			}
 		}
 
-		public override string GetSolutionPart1()
+		public override object GetSolutionPart1()
 		{
 			ParseLines();
 			var count = Triangles.Count(t => t.IsPossible);
-			return count.ToString();
+			return count;
 		}
 
-		public override string GetSolutionPart2()
+		public override object GetSolutionPart2()
 		{
 			Triangles.Clear();
 			ParseLinesVertically();
 			var count = Triangles.Count(t => t.IsPossible);
-			return count.ToString();
+			return count;
 		}
 	}
 }
