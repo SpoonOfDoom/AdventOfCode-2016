@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,27 +22,27 @@ namespace AdventOfCode2016.Days
             public int DecompressedLength => charCount * repeatCount;
         }
 
+        Dictionary<string, Marker> markerCache = new Dictionary<string, Marker>();
+
         private Marker ParseMarker(string markerString)
         {
-            var parts = markerString.Replace("(", "").Replace(")", "").Split('x');
-            return new Marker
-                   {
-                       charCount = parts[0].ToInt(),
-                       repeatCount = parts[1].ToInt(),
-                       MarkerLength = markerString.Length
-                   };
+            if (!markerCache.ContainsKey(markerString))
+            {
+                var parts = markerString.Replace("(", "").Replace(")", "").Split('x');
+                var marker = new Marker
+                             {
+                                 charCount = parts[0].ToInt(),
+                                 repeatCount = parts[1].ToInt(),
+                                 MarkerLength = markerString.Length
+                             };
+                markerCache[markerString] = marker;
+            }
+            return markerCache[markerString];
         }
 
-        private string DecompressPart(Marker marker, string part)
+        private string DecompressPart(int count, string part)
         {
-            string decompressed = "";
-
-            for (int i = 0; i < marker.repeatCount; i++)
-            {
-                decompressed += part;
-            }
-
-            return decompressed;
+            return string.Concat(Enumerable.Repeat(part, count));
         }
 
         private string DecompressString(string s)
@@ -59,7 +60,7 @@ namespace AdventOfCode2016.Days
                 }
                 string front = newString.Substring(0, g.Index);
                 Marker marker = ParseMarker(g.Value);
-                string decompressedMarker = DecompressPart(marker, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
+                string decompressedMarker = DecompressPart(marker.repeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
                 string remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
 
                 newString = front + decompressedMarker + remaining;
@@ -73,19 +74,34 @@ namespace AdventOfCode2016.Days
         {
             long length = 0;
             string newString = s;
+            Group g;
+            Marker marker;
+            string decompressedMarker;
+            string remaining;
+            long m = 100000000;
+            bool mb = true;
+            Stopwatch sw = new Stopwatch();
+            TimeSpan timeTo100000000;
+            sw.Start();
 
             while (newString.Length > 0)
             {
-                Group g = regex.Match(newString).Groups[0];
+                
+                g = regex.Match(newString).Groups[0];
                 if (g.Length == 0)
                 {
                     length += newString.Length;
                     break;
                 }
                 length += g.Index;
-                Marker marker = ParseMarker(g.Value);
-                string decompressedMarker = DecompressPart(marker, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
-                string remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
+                if (length > m && mb)
+                {
+                    timeTo100000000 = sw.Elapsed;
+                    mb = false;
+                }
+                marker = ParseMarker(g.Value);
+                decompressedMarker = DecompressPart(marker.repeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
+                remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
 
                 newString = decompressedMarker + remaining;
 
@@ -93,11 +109,20 @@ namespace AdventOfCode2016.Days
                 //Console.WriteLine(newString.Length);
                 //Console.WriteLine(length);
             }
-            
+            sw.Stop();
+
             return length;
         }
 
-        
+        private void CacheAllMarkers()
+        {
+            var matches = regex.Matches(input);
+
+            foreach (Match match in matches)
+            {
+                ParseMarker(match.Groups[0].Value);
+            }
+        }
 
         public override object GetSolutionPart1()
         {
@@ -169,7 +194,7 @@ namespace AdventOfCode2016.Days
                 What is the decompressed length of the file using this improved format?
              **/
 
-            
+            CacheAllMarkers();
             Dictionary<string, string> testResultsShouldBe = new Dictionary<string, string>
                                                     {
                                                         {"(3x3)XYZ", "XYZXYZXYZ"},
