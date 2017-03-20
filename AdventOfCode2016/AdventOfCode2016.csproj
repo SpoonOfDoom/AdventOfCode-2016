@@ -85,6 +85,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Toolbox.cs" />
     <Compile Include="Tools\AStar.cs" />
+    <Compile Include="Tools\TailRecursion.cs" />
+    <Compile Include="Tools\Trampoline.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

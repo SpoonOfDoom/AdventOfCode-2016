@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using AdventOfCode2016.Extensions;
+using AdventOfCode2016.Tools;
 
 namespace AdventOfCode2016.Days
 {
@@ -99,13 +100,12 @@ namespace AdventOfCode2016.Days
             return length;
         }
 
-        private long DecompressStringV3(string newString)
+        private RecursionResult<long> DecompressStringV3(string newString, long length = 0)
         {
-            long length = 0;
             var g = regex.Match(newString).Groups[0];
             if (g.Length == 0)
             {
-                return newString.Length;
+                return TailRecursion.Return(length + newString.Length);
             }
             length += g.Index;
             var marker = ParseMarker(g.Value);
@@ -113,9 +113,26 @@ namespace AdventOfCode2016.Days
 
             
             var remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
-            return length + DecompressStringV3(decompressedMarker + remaining);
+            return TailRecursion.Next(() =>  DecompressStringV3(decompressedMarker + remaining, length));
         }
 
+        private Bounce<string, long, long> DecompressStringV4(string newString, long length = 0)
+        {
+            var g = regex.Match(newString).Groups[0];
+            if (g.Length == 0)
+            {
+                return Trampoline.ReturnResult<string, long, long>(length + newString.Length);
+            }
+            length += g.Index;
+            var marker = ParseMarker(g.Value);
+            var decompressedMarker = DecompressPart(marker.repeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
+
+            
+            var remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
+            return Trampoline.Recurse<string, long, long>(decompressedMarker + remaining, length);
+        }
+
+        
         private long DecompressWithVersion(string s, int version)
         {
             switch (version)
@@ -125,7 +142,10 @@ namespace AdventOfCode2016.Days
                 case 2:
                     return DecompressStringV2(s);
                 case 3:
-                    return DecompressStringV3(s);
+                    return TailRecursion.Execute(() => DecompressStringV3(s, 0));
+                case 4:
+                    Func<string, long, long> decompress = Trampoline.MakeTrampoline<string, long, long>(DecompressStringV4);
+                    return decompress(s, 0);
                 default:
                     return -1;
             }
@@ -219,12 +239,13 @@ namespace AdventOfCode2016.Days
                                                         {"(27x12)(20x12)(13x14)(7x10)(1x12)A",string.Concat(Enumerable.Repeat("A", 241920))},
                                                         {"(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN", "<Meta:Length=445>"},
                                                     };
-            const int testVersion = 2;
+            const int testVersion = 4;
             foreach (var keyValuePair in testResultsShouldBe)
             {
                 string testInput = keyValuePair.Key;
                 long result = DecompressWithVersion(testInput, testVersion);
                 bool resultCorrect;
+                
                 if (testInput == "(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN")
                 {
                     resultCorrect = result == 445;
