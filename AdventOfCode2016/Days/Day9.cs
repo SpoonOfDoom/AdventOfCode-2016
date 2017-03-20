@@ -72,21 +72,16 @@ namespace AdventOfCode2016.Days
 
         private long DecompressStringV2(string s)
         {
+            Console.Clear();
             long length = 0;
             string newString = s;
             Group g;
             Marker marker;
             string decompressedMarker;
             string remaining;
-            long m = 100000000;
-            bool mb = true;
-            Stopwatch sw = new Stopwatch();
-            TimeSpan timeTo100000000;
-            sw.Start();
-
+            
             while (newString.Length > 0)
             {
-                
                 g = regex.Match(newString).Groups[0];
                 if (g.Length == 0)
                 {
@@ -94,24 +89,46 @@ namespace AdventOfCode2016.Days
                     break;
                 }
                 length += g.Index;
-                if (length > m && mb)
-                {
-                    timeTo100000000 = sw.Elapsed;
-                    mb = false;
-                }
                 marker = ParseMarker(g.Value);
                 decompressedMarker = DecompressPart(marker.repeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
                 remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
 
                 newString = decompressedMarker + remaining;
-
-                //Console.SetCursorPosition(0,0);
-                //Console.WriteLine(newString.Length);
-                //Console.WriteLine(length);
             }
-            sw.Stop();
-
+            
             return length;
+        }
+
+        private long DecompressStringV3(string newString)
+        {
+            long length = 0;
+            var g = regex.Match(newString).Groups[0];
+            if (g.Length == 0)
+            {
+                return newString.Length;
+            }
+            length += g.Index;
+            var marker = ParseMarker(g.Value);
+            var decompressedMarker = DecompressPart(marker.repeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
+
+            
+            var remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
+            return length + DecompressStringV3(decompressedMarker + remaining);
+        }
+
+        private long DecompressWithVersion(string s, int version)
+        {
+            switch (version)
+            {
+                case 1:
+                    return DecompressString(s).Length;
+                case 2:
+                    return DecompressStringV2(s);
+                case 3:
+                    return DecompressStringV3(s);
+                default:
+                    return -1;
+            }
         }
 
         private void CacheAllMarkers()
@@ -202,11 +219,11 @@ namespace AdventOfCode2016.Days
                                                         {"(27x12)(20x12)(13x14)(7x10)(1x12)A",string.Concat(Enumerable.Repeat("A", 241920))},
                                                         {"(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN", "<Meta:Length=445>"},
                                                     };
-
+            const int testVersion = 2;
             foreach (var keyValuePair in testResultsShouldBe)
             {
                 string testInput = keyValuePair.Key;
-                long result = DecompressStringV2(testInput);
+                long result = DecompressWithVersion(testInput, testVersion);
                 bool resultCorrect;
                 if (testInput == "(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN")
                 {
@@ -218,13 +235,12 @@ namespace AdventOfCode2016.Days
                 }
                 if (!resultCorrect)
                 {
-                    long narf = DecompressStringV2(testInput); //for easy jump into debugging
+                    long narf = DecompressWithVersion(testInput, testVersion); //for easy jump into debugging
 
                     throw new Exception($"Test failed.\nExpected: {testResultsShouldBe[testInput]}\nGot instead: {result}"); //So we can't miss it if a test input fails and we don't have a breakpoint.
                 }
             }
-
-            return DecompressStringV2(input);
+            return DecompressWithVersion(input, testVersion); //10943094568, runtime 1:03:31!
         }
     }
 }
