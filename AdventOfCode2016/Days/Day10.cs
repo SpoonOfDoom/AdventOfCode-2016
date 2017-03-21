@@ -56,6 +56,7 @@ namespace AdventOfCode2016.Days
             {
                 if (output)
                 {
+                    Chips.Remove(chip);
                     outputs[targetNumber] = chip;
                 }
                 else
@@ -223,7 +224,31 @@ namespace AdventOfCode2016.Days
 
         public override object GetSolutionPart2()
         {
-            return base.GetSolutionPart2();
+            /*
+             * What do you get if you multiply together the values of one chip in each of outputs 0, 1, and 2?
+             * */
+
+            //reset everything
+            winNumber1 = -1; //no winning numbers; iterate until not possible anymore
+            winNumber2 = -1;
+            bots.Clear();
+            inputAndTargets.Clear();
+            outputs.Clear();
+
+            foreach (string inputLine in inputLines)
+            {
+                ParseCommand(inputLine);
+            }
+            SeedInitial();
+
+            int winBotNumber = -1;
+            while (winBotNumber == -1)
+            {
+                winBotNumber = Iterate();
+            }
+
+
+            return outputs[0] * outputs[1] * outputs[2]; //7847
         }
     }
 }
