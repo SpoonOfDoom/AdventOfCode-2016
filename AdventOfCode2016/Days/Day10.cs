@@ -6,6 +6,7 @@ using AdventOfCode2016.Extensions;
 
 namespace AdventOfCode2016.Days
 {
+    // ReSharper disable once UnusedMember.Global
     class Day10 : Day
     {
         public Day10() : base(10) {}
@@ -13,8 +14,8 @@ namespace AdventOfCode2016.Days
         private static int winNumber1 = 61;
         private static int winNumber2 = 17;
 
-        private Regex botRegex = new Regex(@"bot (\d+) gives low to (\w+) (\d+) and high to (\w+) (\d+)");
-        private Regex inputRegex = new Regex(@"value (\d+) goes to bot (\d+)");
+        private readonly Regex botRegex = new Regex(@"bot (\d+) gives low to (\w+) (\d+) and high to (\w+) (\d+)");
+        private readonly Regex inputRegex = new Regex(@"value (\d+) goes to bot (\d+)");
 
         private static Dictionary<int, Bot> bots = new Dictionary<int, Bot>();
         private static Dictionary<int, int> outputs = new Dictionary<int, int>();
@@ -23,14 +24,14 @@ namespace AdventOfCode2016.Days
         private class Bot
         {
             public int Number;
-            private List<int> Chips = new List<int>();
+            private List<int> chips = new List<int>();
             public int LowTarget, HighTarget;
             public bool LowTargetOutput = false;
             public bool HighTargetOutput = false;
             
 
-            public bool ReadyToWork => Chips.Count == 2;
-            public bool IsWinner => Chips.Count == 2 && Chips.Contains(winNumber1) && Chips.Contains(winNumber2);
+            public bool ReadyToWork => chips.Count == 2;
+            public bool IsWinner => chips.Count == 2 && chips.Contains(winNumber1) && chips.Contains(winNumber2);
 
             public void GiveChips()
             {
@@ -39,41 +40,41 @@ namespace AdventOfCode2016.Days
                     throw new Exception("No two chips available to do things. This shouldn't have been called yet.");
                 }
 
-                if (Chips[0] < Chips[1])
+                if (chips[0] < chips[1])
                 {
-                    GiveTo(LowTarget, Chips[0], LowTargetOutput);
-                    GiveTo(HighTarget, Chips[0], HighTargetOutput);
+                    GiveTo(LowTarget, chips[0], LowTargetOutput);
+                    GiveTo(HighTarget, chips[0], HighTargetOutput);
                 }
                 else
                 {
-                    GiveTo(LowTarget, Chips[1], LowTargetOutput);
-                    GiveTo(HighTarget, Chips[0], HighTargetOutput);
+                    GiveTo(LowTarget, chips[1], LowTargetOutput);
+                    GiveTo(HighTarget, chips[0], HighTargetOutput);
                 }
             }
 
 
-            public void GiveTo(int targetNumber, int chip, bool output = false)
+            private void GiveTo(int targetNumber, int chip, bool output = false)
             {
                 if (output)
                 {
-                    Chips.Remove(chip);
+                    chips.Remove(chip);
                     outputs[targetNumber] = chip;
                 }
                 else
                 {
-                    Chips.Remove(chip);
+                    chips.Remove(chip);
                     bots[targetNumber].Receive(chip);
                 }
             }
 
             public void Receive(int chip)
             {
-                if (Chips.Count >= 2)
+                if (chips.Count >= 2)
                 {
                     throw new Exception("Too many chips!");
                 }
 
-                Chips.Add(chip);
+                chips.Add(chip);
             }
         }
 
@@ -81,7 +82,7 @@ namespace AdventOfCode2016.Days
         {
             if (line.StartsWith("bot"))
             {
-                var groups = botRegex.Match(line).Groups;
+                GroupCollection groups = botRegex.Match(line).Groups;
                 //private Regex botRegex = new Regex(@"bot (\d+) gives low to (\w+) (\d+) and high to (\w+) (\d+)");
                 var bot = new Bot
                           {
@@ -125,7 +126,7 @@ namespace AdventOfCode2016.Days
             {
                 return winBot.Number;
             }
-            var readyBots = bots.Values.Where(b => b.ReadyToWork).ToList();
+            List<Bot> readyBots = bots.Values.Where(b => b.ReadyToWork).ToList();
             if (!readyBots.Any())
             {
                 return -2;
@@ -137,7 +138,7 @@ namespace AdventOfCode2016.Days
             return -1;
         }
 
-        public override object GetSolutionPart1()
+        protected override object GetSolutionPart1()
         {
             /*
              * You come upon a factory in which many robots are zooming around handing small microchips to each other.
@@ -207,7 +208,7 @@ namespace AdventOfCode2016.Days
             outputs.Clear();
             #endregion
 
-            foreach (string inputLine in inputLines)
+            foreach (string inputLine in InputLines)
             {
                 ParseCommand(inputLine);
             }
@@ -222,7 +223,7 @@ namespace AdventOfCode2016.Days
             return winBotNumber; //56
         }
 
-        public override object GetSolutionPart2()
+        protected override object GetSolutionPart2()
         {
             /*
              * What do you get if you multiply together the values of one chip in each of outputs 0, 1, and 2?
@@ -235,7 +236,7 @@ namespace AdventOfCode2016.Days
             inputAndTargets.Clear();
             outputs.Clear();
 
-            foreach (string inputLine in inputLines)
+            foreach (string inputLine in InputLines)
             {
                 ParseCommand(inputLine);
             }

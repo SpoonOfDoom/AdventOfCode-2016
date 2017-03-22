@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace AdventOfCode2016.Days
 {
+    // ReSharper disable once UnusedMember.Global
     class Day7 : Day
     {
         public Day7() : base(7) {}
@@ -86,16 +87,16 @@ namespace AdventOfCode2016.Days
             }
             return false;
         }
-        
-        public override object GetSolutionPart1()
+
+        protected override object GetSolutionPart1()
         {
-            int ipsWithTls = inputLines.Count(SupportsTls);
+            int ipsWithTls = InputLines.Count(SupportsTls);
             return ipsWithTls; //118
         }
 
-        public override object GetSolutionPart2()
+        protected override object GetSolutionPart2()
         {
-            int ipsWithSsl = inputLines.Count(SupportsSsl);
+            int ipsWithSsl = InputLines.Count(SupportsSsl);
             return ipsWithSsl; //260
         }
     }

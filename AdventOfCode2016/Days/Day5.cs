@@ -6,7 +6,8 @@ using AdventOfCode2016.Extensions;
 
 namespace AdventOfCode2016.Days
 {
-	class Day5 : Day
+    // ReSharper disable once UnusedMember.Global
+    class Day5 : Day
 	{
 		public Day5() : base(5) {}
 
@@ -66,7 +67,7 @@ namespace AdventOfCode2016.Days
 				{
 					Console.Write("Hacking... {0}\r", GetGuessString(passwordBuilder));
 				}
-				string word = input + i;
+				string word = Input + i;
 				var hashBytes = GetHashBytes(word);
 				if (hashBytes[0] == 0 && hashBytes[1] == 0)
 				{
@@ -89,7 +90,7 @@ namespace AdventOfCode2016.Days
 			Console.WriteLine();
 			if (doorId == null)
 			{
-				doorId = input;
+				doorId = Input;
 			}
 			StringBuilder passwordBuilder = new StringBuilder("________");
 			int i = 0;
@@ -125,13 +126,13 @@ namespace AdventOfCode2016.Days
 			return passwordBuilder.ToString();
 		}
 
-		public override object GetSolutionPart1()
+	    protected override object GetSolutionPart1()
 		{
 			//"801b56a7";
 			return GetPassword();
 		}
 
-		public override object GetSolutionPart2()
+	    protected override object GetSolutionPart2()
 		{
 			//424a0197
 			return GetPassword2();

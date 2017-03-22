@@ -5,7 +5,8 @@ using AdventOfCode2016.Extensions;
 
 namespace AdventOfCode2016.Days
 {
-	class Day1 : Day
+    // ReSharper disable once UnusedMember.Global
+    class Day1 : Day
 	{
 		public Day1() : base(1) {}
 		private List<MoveCommand> commandList = new List<MoveCommand>();
@@ -19,7 +20,7 @@ namespace AdventOfCode2016.Days
 
 		private void ParseInput()
 		{
-			var commands = input.Split(',').Select(s => s.Trim());
+			var commands = Input.Split(',').Select(s => s.Trim());
 			foreach (string s in commands)
 			{
 				MoveCommand command = new MoveCommand()
@@ -101,7 +102,7 @@ namespace AdventOfCode2016.Days
 			}
 		}
 
-		public override object GetSolutionPart1()
+	    protected override object GetSolutionPart1()
 		{
 			ParseInput();
 
@@ -119,7 +120,7 @@ namespace AdventOfCode2016.Days
 			return distance;
 		}
 
-		public override object GetSolutionPart2()
+	    protected override object GetSolutionPart2()
 		{
 			int x = 0;
 			int y = 0;

@@ -1,39 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using AdventOfCode2016.Extensions;
 using AdventOfCode2016.Tools;
 
 namespace AdventOfCode2016.Days
 {
+    // ReSharper disable once UnusedMember.Global
     class Day9 : Day
     {
         public Day9() : base(9) {}
-        Regex regex = new Regex(@"(\(\d+x\d+\))");
+        private readonly Regex regex = new Regex(@"(\(\d+x\d+\))");
 
         private class Marker
         {
-            public int charCount;
-            public int repeatCount;
+            public int CharCount;
+            public int RepeatCount;
             public int MarkerLength;
 
-            public int DecompressedLength => charCount * repeatCount;
+            public int DecompressedLength => CharCount * RepeatCount;
         }
 
-        Dictionary<string, Marker> markerCache = new Dictionary<string, Marker>();
+        private Dictionary<string, Marker> markerCache = new Dictionary<string, Marker>();
 
         private Marker ParseMarker(string markerString)
         {
             if (!markerCache.ContainsKey(markerString))
             {
-                var parts = markerString.Replace("(", "").Replace(")", "").Split('x');
+                string[] parts = markerString.Replace("(", "").Replace(")", "").Split('x');
                 var marker = new Marker
                              {
-                                 charCount = parts[0].ToInt(),
-                                 repeatCount = parts[1].ToInt(),
+                                 CharCount = parts[0].ToInt(),
+                                 RepeatCount = parts[1].ToInt(),
                                  MarkerLength = markerString.Length
                              };
                 markerCache[markerString] = marker;
@@ -61,8 +60,8 @@ namespace AdventOfCode2016.Days
                 }
                 string front = newString.Substring(0, g.Index);
                 Marker marker = ParseMarker(g.Value);
-                string decompressedMarker = DecompressPart(marker.repeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
-                string remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
+                string decompressedMarker = DecompressPart(marker.RepeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.CharCount));
+                string remaining = newString.Substring(g.Index + marker.MarkerLength + marker.CharCount);
 
                 newString = front + decompressedMarker + remaining;
                 currentIndex = g.Index + marker.DecompressedLength;
@@ -91,8 +90,8 @@ namespace AdventOfCode2016.Days
                 }
                 length += g.Index;
                 marker = ParseMarker(g.Value);
-                decompressedMarker = DecompressPart(marker.repeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
-                remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
+                decompressedMarker = DecompressPart(marker.RepeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.CharCount));
+                remaining = newString.Substring(g.Index + marker.MarkerLength + marker.CharCount);
 
                 newString = decompressedMarker + remaining;
             }
@@ -109,26 +108,26 @@ namespace AdventOfCode2016.Days
             }
             length += g.Index;
             var marker = ParseMarker(g.Value);
-            var decompressedMarker = DecompressPart(marker.repeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
+            var decompressedMarker = DecompressPart(marker.RepeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.CharCount));
 
             
-            var remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
+            var remaining = newString.Substring(g.Index + marker.MarkerLength + marker.CharCount);
             return TailRecursion.Next(() =>  DecompressStringV3(decompressedMarker + remaining, length));
         }
 
         private Bounce<string, long, long> DecompressStringV4(string newString, long length = 0)
         {
-            var g = regex.Match(newString).Groups[0];
+            Group g = regex.Match(newString).Groups[0];
             if (g.Length == 0)
             {
                 return Trampoline.ReturnResult<string, long, long>(length + newString.Length);
             }
             length += g.Index;
-            var marker = ParseMarker(g.Value);
-            var decompressedMarker = DecompressPart(marker.repeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.charCount));
+            Marker marker = ParseMarker(g.Value);
+            string decompressedMarker = DecompressPart(marker.RepeatCount, newString.Substring(g.Index + marker.MarkerLength, marker.CharCount));
 
             
-            var remaining = newString.Substring(g.Index + marker.MarkerLength + marker.charCount);
+            string remaining = newString.Substring(g.Index + marker.MarkerLength + marker.CharCount);
             return Trampoline.Recurse<string, long, long>(decompressedMarker + remaining, length);
         }
 
@@ -142,7 +141,7 @@ namespace AdventOfCode2016.Days
                 case 2:
                     return DecompressStringV2(s);
                 case 3:
-                    return TailRecursion.Execute(() => DecompressStringV3(s, 0));
+                    return TailRecursion.Execute(() => DecompressStringV3(s));
                 case 4:
                     Func<string, long, long> decompress = Trampoline.MakeTrampoline<string, long, long>(DecompressStringV4);
                     return decompress(s, 0);
@@ -153,7 +152,7 @@ namespace AdventOfCode2016.Days
 
         private void CacheAllMarkers()
         {
-            var matches = regex.Matches(input);
+            var matches = regex.Matches(Input);
 
             foreach (Match match in matches)
             {
@@ -161,7 +160,7 @@ namespace AdventOfCode2016.Days
             }
         }
 
-        public override object GetSolutionPart1()
+        protected override object GetSolutionPart1()
         {
             /*Wandering around a secure area, you come across a datalink port to a new part of the network. After briefly scanning it for interesting files,
             you find one file in particular that catches your attention.It's compressed with an experimental format, but fortunately, the documentation for the format is nearby.
@@ -203,16 +202,16 @@ namespace AdventOfCode2016.Days
 
                 if (testResultsShouldBe[testInput] != result)
                 {
-                    string narf = DecompressString(testInput); //for easy jump into debugging
+                    DecompressString(testInput);
 
                     throw new Exception($"Test failed.\nExpected: {testResultsShouldBe[testInput]}\nGot instead: {result}"); //So we can't miss it if a test input fails and we don't have a breakpoint.
                 }
             }
 
-            return DecompressString(input).Length; //99145
+            return DecompressString(Input).Length; //99145
         }
 
-        public override object GetSolutionPart2()
+        protected override object GetSolutionPart2()
         {
             /*
              *Apparently, the file actually uses version two of the format.
@@ -232,7 +231,7 @@ namespace AdventOfCode2016.Days
              **/
 
             CacheAllMarkers();
-            Dictionary<string, string> testResultsShouldBe = new Dictionary<string, string>
+            var testResultsShouldBe = new Dictionary<string, string>
                                                     {
                                                         {"(3x3)XYZ", "XYZXYZXYZ"},
                                                         {"X(8x2)(3x3)ABCY", "XABCABCABCABCABCABCY"},
@@ -240,7 +239,7 @@ namespace AdventOfCode2016.Days
                                                         {"(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN", "<Meta:Length=445>"},
                                                     };
             const int testVersion = 4;
-            foreach (var keyValuePair in testResultsShouldBe)
+            foreach (KeyValuePair<string, string> keyValuePair in testResultsShouldBe)
             {
                 string testInput = keyValuePair.Key;
                 long result = DecompressWithVersion(testInput, testVersion);
@@ -256,12 +255,12 @@ namespace AdventOfCode2016.Days
                 }
                 if (!resultCorrect)
                 {
-                    long narf = DecompressWithVersion(testInput, testVersion); //for easy jump into debugging
+                    DecompressWithVersion(testInput, testVersion);
 
                     throw new Exception($"Test failed.\nExpected: {testResultsShouldBe[testInput]}\nGot instead: {result}"); //So we can't miss it if a test input fails and we don't have a breakpoint.
                 }
             }
-            return DecompressWithVersion(input, testVersion); //10943094568, runtime 1:03:31!
+            return DecompressWithVersion(Input, testVersion); //10943094568, runtime 1:03:31!
         }
     }
 }

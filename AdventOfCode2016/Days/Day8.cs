@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using AdventOfCode2016.Extensions;
 
 namespace AdventOfCode2016.Days
 {
+    // ReSharper disable once UnusedMember.Global
     class Day8 : Day
     {
         public Day8() : base(8) {}
@@ -113,10 +113,10 @@ namespace AdventOfCode2016.Days
                     throw new ArgumentOutOfRangeException(parts[0]);
             }
         }
-        
-        public override object GetSolutionPart1()
+
+        protected override object GetSolutionPart1()
         {
-            foreach (string line in inputLines)
+            foreach (string line in InputLines)
             {
                 Commands.Add(ParseCommand(line));
             }
@@ -140,7 +140,7 @@ namespace AdventOfCode2016.Days
             return truthinessPixelCount; //121
         }
 
-        public override object GetSolutionPart2()
+        protected override object GetSolutionPart2()
         {
             Console.WriteLine();
             for (int y = 0; y < screenHeight; y++)

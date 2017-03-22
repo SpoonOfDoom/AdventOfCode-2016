@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace AdventOfCode2016.Days
 {
+    // ReSharper disable once UnusedMember.Global
     class Day6 : Day
     {
         public Day6() : base(6) {}
@@ -10,11 +10,11 @@ namespace AdventOfCode2016.Days
         private Dictionary<int, Dictionary<char, int>> letterCount = new Dictionary<int, Dictionary<char, int>>();
         private int messageLength;
 
-        public override object GetSolutionPart1()
+        protected override object GetSolutionPart1()
         {
-            messageLength = inputLines[0].Length;
+            messageLength = InputLines[0].Length;
 
-            foreach (string line in inputLines)
+            foreach (string line in InputLines)
             {
                 for (int j = 0; j < messageLength; j++)
                 {
@@ -49,7 +49,7 @@ namespace AdventOfCode2016.Days
             return result; //qtbjqiuq
         }
 
-        public override object GetSolutionPart2()
+        protected override object GetSolutionPart2()
         {
             Dictionary<int, char> correctChars = new Dictionary<int, char>();
             int least = int.MaxValue;

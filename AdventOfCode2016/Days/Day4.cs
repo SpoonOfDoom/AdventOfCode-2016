@@ -6,7 +6,8 @@ using AdventOfCode2016.Extensions;
 
 namespace AdventOfCode2016.Days
 {
-	class Day4 : Day
+    // ReSharper disable once UnusedMember.Global
+    class Day4 : Day
 	{
 		private class Room
 		{
@@ -80,7 +81,7 @@ namespace AdventOfCode2016.Days
 
 		private void ParseLines()
 		{
-			foreach (string line in inputLines)
+			foreach (string line in InputLines)
 			{
 				var groups = regex.Match(line).Groups;
 
@@ -94,15 +95,15 @@ namespace AdventOfCode2016.Days
 				rooms.Add(r);
 			}
 		}
-		
-		public override object GetSolutionPart1()
+
+	    protected override object GetSolutionPart1()
 		{
 			ParseLines();
 			var realRooms = rooms.Where(r => r.IsValid());
 			return realRooms.Sum(r => r.SectorId);
 		}
 
-		public override object GetSolutionPart2()
+	    protected override object GetSolutionPart2()
 		{
 			var decryptedNames = rooms.Select(r => r.DecryptName()).ToList();
 			var sector = rooms.Single(r => r.DecryptName().StartsWith("northpole")).SectorId;

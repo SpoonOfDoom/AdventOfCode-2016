@@ -5,7 +5,8 @@ using AdventOfCode2016.Extensions;
 
 namespace AdventOfCode2016.Days
 {
-	class Day3 : Day
+    // ReSharper disable once UnusedMember.Global
+    class Day3 : Day
 	{
 		private class Triangle
 		{
@@ -41,7 +42,7 @@ namespace AdventOfCode2016.Days
 
 		private void ParseLines()
 		{
-			foreach (var line in inputLines)
+			foreach (var line in InputLines)
 			{
 				var s = line;
 				while (s.Contains("  ")) //normalize spaces without regex
@@ -61,7 +62,7 @@ namespace AdventOfCode2016.Days
 			List<int> TriangleB = new List<int>();
 			List<int> TriangleC = new List<int>();
 
-			foreach (var line in inputLines)
+			foreach (var line in InputLines)
 			{
 				var s = line;
 				while (s.Contains("  ")) //normalize spaces without regex
@@ -86,14 +87,14 @@ namespace AdventOfCode2016.Days
 			}
 		}
 
-		public override object GetSolutionPart1()
+	    protected override object GetSolutionPart1()
 		{
 			ParseLines();
 			var count = Triangles.Count(t => t.IsPossible);
 			return count;
 		}
 
-		public override object GetSolutionPart2()
+	    protected override object GetSolutionPart2()
 		{
 			Triangles.Clear();
 			ParseLinesVertically();
