@@ -12,7 +12,7 @@ namespace AdventOfCode2016.Tools
         {
             do
             {
-                var recursionResult = func();
+                RecursionResult<T> recursionResult = func();
                 if (recursionResult.IsFinalResult)
                     return recursionResult.Result;
                 func = recursionResult.NextStep;
@@ -33,18 +33,15 @@ namespace AdventOfCode2016.Tools
 
     public class RecursionResult<T>
     {
-        private readonly bool _isFinalResult;
-        private readonly T _result;
-        private readonly Func<RecursionResult<T>> _nextStep;
         internal RecursionResult(bool isFinalResult, T result, Func<RecursionResult<T>> nextStep)
         {
-            _isFinalResult = isFinalResult;
-            _result = result;
-            _nextStep = nextStep;
+            IsFinalResult = isFinalResult;
+            Result = result;
+            NextStep = nextStep;
         }
 
-        public bool IsFinalResult { get { return _isFinalResult; } }
-        public T Result { get { return _result; } }
-        public Func<RecursionResult<T>> NextStep { get { return _nextStep; } }
+        public bool IsFinalResult { get; }
+        public T Result { get; }
+        public Func<RecursionResult<T>> NextStep { get; }
     }
 }

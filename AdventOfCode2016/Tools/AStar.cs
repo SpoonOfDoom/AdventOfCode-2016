@@ -20,17 +20,15 @@ namespace AdventOfCode2016.Tools
 
     public struct ExpandAction
     {
-        public ISearchNode result;
-        public object action;
-        public int cost;
+        public ISearchNode Result;
+        public object Action;
+        public int Cost;
     }
 
     public class AStar
     {
-        SimplePriorityQueue<ISearchNode> openQueue;
-        HashSet<ISearchNode> closedSet;
-
-        Dictionary<ISearchNode, int> nodeCost = new Dictionary<ISearchNode, int>();
+        private SimplePriorityQueue<ISearchNode> openQueue;
+        private HashSet<ISearchNode> closedSet;
 
         public int GetMinimumCost(ISearchNode startState, ISearchNode goalState = null, bool verbose = false)
         {
@@ -38,6 +36,7 @@ namespace AdventOfCode2016.Tools
             return path.Item2;
         }
 
+        // ReSharper disable once MemberCanBePrivate.Global
         public Tuple<List<object>, int> GetOptimalPath(ISearchNode startState, ISearchNode goalState = null, bool verbose = false)
         {
             if (verbose)
@@ -72,9 +71,9 @@ namespace AdventOfCode2016.Tools
 
                 foreach (ExpandAction expandAction in expandActions)
                 {
-                    ISearchNode newNode = expandAction.result;
-                    newNode.Cost = current.Cost + expandAction.cost;
-                    newNode.Actions.Add(expandAction.action);
+                    ISearchNode newNode = expandAction.Result;
+                    newNode.Cost = current.Cost + expandAction.Cost;
+                    newNode.Actions.Add(expandAction.Action);
                     if (closedSet.Any(x => x.Equals(newNode)))
                     {
                         continue;

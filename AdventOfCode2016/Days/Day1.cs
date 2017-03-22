@@ -20,10 +20,10 @@ namespace AdventOfCode2016.Days
 
 		private void ParseInput()
 		{
-			var commands = Input.Split(',').Select(s => s.Trim());
+			IEnumerable<string> commands = Input.Split(',').Select(s => s.Trim());
 			foreach (string s in commands)
 			{
-				MoveCommand command = new MoveCommand()
+				var command = new MoveCommand()
 				{
 					Rotation = s[0],
 					Blocks = s.Substring(1).ToInt()
@@ -34,7 +34,7 @@ namespace AdventOfCode2016.Days
 
 		private char ApplyRotation(char start, char rotation)
 		{
-			char newDirection = 'x';
+			char newDirection;
 			switch (start)
 			{
 				case 'n':
@@ -49,6 +49,8 @@ namespace AdventOfCode2016.Days
 				case 'w':
 					newDirection = rotation == 'R' ? 'n' : 's';
 					break;
+                default:
+                    throw new Exception("Invalid direction");
 			}
 			return newDirection;
 		}
@@ -109,9 +111,9 @@ namespace AdventOfCode2016.Days
 			int x = 0;
 			int y = 0;
 
-			var facing = 'n';
+			char facing = 'n';
 
-			foreach (var command in commandList)
+			foreach (MoveCommand command in commandList)
 			{
 				facing = ApplyRotation(facing, command.Rotation);
 				Move(ref x, ref y, command.Blocks, facing);
@@ -125,9 +127,9 @@ namespace AdventOfCode2016.Days
 			int x = 0;
 			int y = 0;
 
-			var facing = 'n';
+			char facing = 'n';
 			visitedLocations.Add("0-0");
-			foreach (var command in commandList)
+			foreach (MoveCommand command in commandList)
 			{
 				var locations = new List<string>();
 				facing = ApplyRotation(facing, command.Rotation);
@@ -137,7 +139,7 @@ namespace AdventOfCode2016.Days
 				{
 					if (visitedLocations.Contains(s))
 					{
-						var numbers = s.Split('|').Select(c => int.Parse(c.ToString()));
+						IEnumerable<int> numbers = s.Split('|').Select(c => int.Parse(c.ToString()));
 						int solution = numbers.Sum(Math.Abs);
 						return solution;
 					}

@@ -1,13 +1,13 @@
-﻿using Org.BouncyCastle.Crypto.Digests;
+﻿using System;
+using Org.BouncyCastle.Crypto.Digests;
 
 namespace AdventOfCode2016
 {
-	class Toolbox
-	{
-		public string GetHashString(string input, MD5Digest md5)
-		{
-
-			return "";
-		}
-	}
+    static class Toolbox
+    {
+        public static string GetHashString(string input, MD5Digest md5)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

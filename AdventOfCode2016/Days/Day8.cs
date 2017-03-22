@@ -37,11 +37,11 @@ namespace AdventOfCode2016.Days
 
                     case CommandType.RotateColumn:
                         List<int> newYs = new List<int>();
-                        for (int y = 0; y < screenHeight; y++)
+                        for (int y = 0; y < ScreenHeight; y++)
                         {
                             if (display[X, y])
                             {
-                                newYs.Add((y + Value)%screenHeight);
+                                newYs.Add((y + Value)%ScreenHeight);
                                 display[X, y] = false;
                             }
                         }
@@ -54,11 +54,11 @@ namespace AdventOfCode2016.Days
 
                     case CommandType.RotateRow:
                         List<int> newXs = new List<int>();
-                        for (int x = 0; x < screenWidth; x++)
+                        for (int x = 0; x < ScreenWidth; x++)
                         {
                             if (display[x, Y])
                             {
-                                newXs.Add((x + Value) % screenWidth);
+                                newXs.Add((x + Value) % ScreenWidth);
                                 display[x, Y] = false;
                             }
                         }
@@ -74,11 +74,11 @@ namespace AdventOfCode2016.Days
             }
         }
 
-        private const int screenWidth = 50;
-        private const int screenHeight = 6;
-        private bool[,] display = new bool[screenWidth,screenHeight];
+        private const int ScreenWidth = 50;
+        private const int ScreenHeight = 6;
+        private bool[,] display = new bool[ScreenWidth,ScreenHeight];
 
-        private List<Command> Commands = new List<Command>();
+        private List<Command> commands = new List<Command>();
 
         private Command ParseCommand(string commandText)
         {
@@ -118,18 +118,18 @@ namespace AdventOfCode2016.Days
         {
             foreach (string line in InputLines)
             {
-                Commands.Add(ParseCommand(line));
+                commands.Add(ParseCommand(line));
             }
 
-            foreach (Command command in Commands)
+            foreach (Command command in commands)
             {
                 command.ExecuteCommand(display);
             }
 
             int truthinessPixelCount = 0;
-            for (int x = 0; x < screenWidth; x++)
+            for (int x = 0; x < ScreenWidth; x++)
             {
-                for (int y = 0; y < screenHeight; y++)
+                for (int y = 0; y < ScreenHeight; y++)
                 {
                     if (display[x,y])
                     {
@@ -143,9 +143,9 @@ namespace AdventOfCode2016.Days
         protected override object GetSolutionPart2()
         {
             Console.WriteLine();
-            for (int y = 0; y < screenHeight; y++)
+            for (int y = 0; y < ScreenHeight; y++)
             {
-                for (int x = 0; x < screenWidth; x++)
+                for (int x = 0; x < ScreenWidth; x++)
                 {
                     if (x%5 ==0)
                     {
@@ -155,7 +155,6 @@ namespace AdventOfCode2016.Days
                 }
                 Console.Write("\n");
             }
-            int i = 0;
             Console.Read();
             //todo: read letters programmatically
             return "RURUCEOEIL"; //RURUCEOEIL

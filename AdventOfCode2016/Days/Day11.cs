@@ -123,10 +123,5 @@
                 */
             return null;
         }
-
-        protected override object GetSolutionPart2()
-        {
-            return base.GetSolutionPart2();
-        }
     }
 }

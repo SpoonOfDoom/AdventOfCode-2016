@@ -14,8 +14,8 @@ namespace AdventOfCode2016.Days
 
         private struct Coordinate
         {
-            public int x;
-            public int y;
+            public int X;
+            public int Y;
         }
 
         private Dictionary<Coordinate, bool> isWallLookup = new Dictionary<Coordinate, bool>();
@@ -29,8 +29,8 @@ namespace AdventOfCode2016.Days
             {
                 return isWallLookup[tile];
             }
-            int x = tile.x;
-            int y = tile.y;
+            int x = tile.X;
+            int y = tile.Y;
 
             if (x < 0 || y < 0)
             {
@@ -66,7 +66,7 @@ namespace AdventOfCode2016.Days
             {
                 return 0;
             }
-            return Math.Abs(node.x - target.x) + Math.Abs(node.y - target.y);
+            return Math.Abs(node.X - target.X) + Math.Abs(node.Y - target.Y);
         }
 
         /// <summary>
@@ -81,28 +81,28 @@ namespace AdventOfCode2016.Days
 
             List<Coordinate> nodes = new List<Coordinate>();
             
-            var nodeLeft = new Coordinate() {x = node.x-1, y = node.y};
+            var nodeLeft = new Coordinate() {X = node.X-1, Y = node.Y};
             if (!IsWall(nodeLeft, number))
             {
                 nodes.Add(nodeLeft);
             }
             
 
-            var nodeRight = new Coordinate() {x = node.x+1, y = node.y};
+            var nodeRight = new Coordinate() {X = node.X+1, Y = node.Y};
             if (!IsWall(nodeRight, number))
             {
                 nodes.Add(nodeRight);
             }
 
             
-            var nodeUp = new Coordinate() {x = node.x, y = node.y -1};
+            var nodeUp = new Coordinate() {X = node.X, Y = node.Y -1};
             if (!IsWall(nodeUp, number))
             {
                 nodes.Add(nodeUp);
             }
             
 
-            var nodeDown = new Coordinate() {x = node.x, y = node.y +1};
+            var nodeDown = new Coordinate() {X = node.X, Y = node.Y +1};
             if (!IsWall(nodeDown, number))
             {
                 nodes.Add(nodeDown);
@@ -125,7 +125,7 @@ namespace AdventOfCode2016.Days
         //Lazy way to draw without specifying a target Coordinate.
         private void DrawMap(Coordinate start, Coordinate current, SimplePriorityQueue<Coordinate> openList, HashSet<Coordinate> closed)
         {
-            var dummy = new Coordinate() {x = int.MaxValue, y = int.MaxValue};
+            var dummy = new Coordinate() {X = int.MaxValue, Y = int.MaxValue};
             DrawMap(start, dummy, current, openList, closed);
         }
 
@@ -135,14 +135,14 @@ namespace AdventOfCode2016.Days
             Console.CursorTop = 0;
             Console.WriteLine("Legend - Free:. Wall:X Start:S Target:T Closed:c Open:o Current:G");
 
-            int maxX = isWallLookup.Keys.Max(t => t.x);
-            int maxY = isWallLookup.Keys.Max(t => t.y);
+            int maxX = isWallLookup.Keys.Max(t => t.X);
+            int maxY = isWallLookup.Keys.Max(t => t.Y);
             for (int y = 0; y <= maxY; y++)
             {
                 Console.WriteLine();
                 for (int x = 0; x <= maxX; x++)
                 {
-                    Coordinate c = new Coordinate() {x = x, y = y};
+                    Coordinate c = new Coordinate() {X = x, Y = y};
                     if (c.Equals(current))
                     {
                         ConsoleWithColor("G", fgColor: ConsoleColor.Magenta);
@@ -294,8 +294,8 @@ namespace AdventOfCode2016.Days
 
         protected override object GetSolutionPart1()
         {
-            var start = new Coordinate { x = 1, y = 1 };
-            var target = new Coordinate { x = 31, y = 39 };
+            var start = new Coordinate { X = 1, Y = 1 };
+            var target = new Coordinate { X = 31, Y = 39 };
             int pathCost = FindPath(start, target, manual:false);
 
             if (pathCost == -1)
@@ -308,7 +308,7 @@ namespace AdventOfCode2016.Days
 
         protected override object GetSolutionPart2()
         {
-            var start = new Coordinate { x = 1, y = 1 };
+            var start = new Coordinate { X = 1, Y = 1 };
             int steps = 50;
             int tiles = FindRange(start, steps, manual:false);
             return tiles.ToString();

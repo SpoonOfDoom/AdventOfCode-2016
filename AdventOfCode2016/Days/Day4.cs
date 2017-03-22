@@ -105,8 +105,7 @@ namespace AdventOfCode2016.Days
 
 	    protected override object GetSolutionPart2()
 		{
-			var decryptedNames = rooms.Select(r => r.DecryptName()).ToList();
-			var sector = rooms.Single(r => r.DecryptName().StartsWith("northpole")).SectorId;
+			int sector = rooms.Single(r => r.DecryptName().StartsWith("northpole")).SectorId;
 
 			//todo: find out if something's wrong here
 			return sector;

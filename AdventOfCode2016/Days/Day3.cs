@@ -58,31 +58,31 @@ namespace AdventOfCode2016.Days
 
 		private void ParseLinesVertically()
 		{
-			List<int> TriangleA = new List<int>();
-			List<int> TriangleB = new List<int>();
-			List<int> TriangleC = new List<int>();
+			var triangleA = new List<int>();
+			var triangleB = new List<int>();
+			var triangleC = new List<int>();
 
-			foreach (var line in InputLines)
+			foreach (string line in InputLines)
 			{
-				var s = line;
+				string s = line;
 				while (s.Contains("  ")) //normalize spaces without regex
 				{
 					s = s.Replace("  ", " ");
 				}
 
-				var sides = s.Trim().Split(' ').Select(x => x.ToInt()).ToList();
-				TriangleA.Add(sides[0]);
-				TriangleB.Add(sides[1]);
-				TriangleC.Add(sides[2]);
-				if (TriangleA.Count == 3)
+				List<int> sides = s.Trim().Split(' ').Select(x => x.ToInt()).ToList();
+				triangleA.Add(sides[0]);
+				triangleB.Add(sides[1]);
+				triangleC.Add(sides[2]);
+				if (triangleA.Count == 3)
 				{
-					Triangles.Add(new Triangle(TriangleA));
-					Triangles.Add(new Triangle(TriangleB));
-					Triangles.Add(new Triangle(TriangleC));
+					Triangles.Add(new Triangle(triangleA));
+					Triangles.Add(new Triangle(triangleB));
+					Triangles.Add(new Triangle(triangleC));
 
-					TriangleA.Clear();
-					TriangleB.Clear();
-					TriangleC.Clear();
+					triangleA.Clear();
+					triangleB.Clear();
+					triangleC.Clear();
 				}
 			}
 		}
@@ -90,7 +90,7 @@ namespace AdventOfCode2016.Days
 	    protected override object GetSolutionPart1()
 		{
 			ParseLines();
-			var count = Triangles.Count(t => t.IsPossible);
+			int count = Triangles.Count(t => t.IsPossible);
 			return count;
 		}
 
@@ -98,7 +98,7 @@ namespace AdventOfCode2016.Days
 		{
 			Triangles.Clear();
 			ParseLinesVertically();
-			var count = Triangles.Count(t => t.IsPossible);
+			int count = Triangles.Count(t => t.IsPossible);
 			return count;
 		}
 	}
