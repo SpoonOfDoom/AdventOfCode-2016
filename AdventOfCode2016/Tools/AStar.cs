@@ -32,7 +32,7 @@ namespace AdventOfCode2016.Tools
 
         public int GetMinimumCost(ISearchNode startState, ISearchNode goalState = null, bool verbose = false)
         {
-            Tuple<List<object>, int> path = GetOptimalPath(startState, goalState, verbose);
+            Tuple<List<object>, int> path = GetOptimalPath(startState, goalState, verbose); //todo: make "Action" interface/abstract class so we can grab the cost and other data from them
             return path.Item2;
         }
 
@@ -78,12 +78,12 @@ namespace AdventOfCode2016.Tools
                     {
                         continue;
                     }
-
-                    if (openQueue.Any(x => x.Equals(newNode)))
+                    ISearchNode match = openQueue.SingleOrDefault(x => x.Equals(newNode));
+                    if (match != default(ISearchNode))
                     {
-                        if (openQueue.Single(x => x.Equals(newNode)).Cost > newNode.Cost)
+                        if (match.Cost > newNode.Cost)
                         {
-                            openQueue.UpdatePriority(openQueue.Single(x => x.Equals(newNode)), newNode.Cost + newNode.GetHeuristic(goalState));
+                            openQueue.UpdatePriority(match, newNode.Cost + newNode.GetHeuristic(goalState));
                         }
                     }
                     else
@@ -93,7 +93,7 @@ namespace AdventOfCode2016.Tools
                 }
             }
 
-            return null;
+            return Tuple.Create(new List<object>(), -1);
         }
 
         private void OutputVerboseInfo(ISearchNode goalState, Stopwatch searchWatch, long step, ISearchNode current)
