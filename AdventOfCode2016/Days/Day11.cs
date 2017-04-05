@@ -22,7 +22,7 @@ namespace AdventOfCode2016.Days
 
             public int Cost { get; set; }
             public List<object> Actions { get; set; }
-            public string VerboseInfo => "";
+            public string VerboseInfo => $"Floor 1:{floors[1].Count}  \nFloor 2:{floors[2].Count}  \nFloor 3:{floors[3].Count}  \nFloor 4:{floors[4].Count}  \n";
             private const int MaxItemsInElevator = 2;
 
             public int elevatorPosition = 1;
@@ -136,10 +136,12 @@ namespace AdventOfCode2016.Days
                         {
                             continue;
                         }
-                        if (newState.floors[newState.elevatorPosition].Count == 0)
-                        {
-                            throw new Exception("This shouldn't happen, might be worth to investigate what lead here.");
-                        }
+                        //if (newState.floors[newState.elevatorPosition].Count == 0)
+                        //{
+                        //    throw new Exception("This shouldn't happen, might be worth to investigate what lead here.");
+                        //}
+                        newState.floors[startFloor].Sort();
+                        newState.floors[targetFloor].Sort();
                         actions.Add(new ExpandAction {Cost = 1, Action = new Action {startFloor = startFloor, endFloor = targetFloor, items = new List<string>(itemCombo)}, Result = newState});
                     }
                 }
@@ -194,15 +196,11 @@ namespace AdventOfCode2016.Days
                     }
                     if (i < 4)
                     {
-                        var matching = floors[i].Select(item => item.Substring(0, item.Length - 1))
+                        int matching = floors[i].Select(item => item.Substring(0, item.Length - 1))
                             .Intersect(floors[i + 1]
                             .Select(item2 => item2.Substring(0, item2.Length - 1))).Count();
                         maybeCost -= (matching / 10f);
                     }
-                    //if (generatorCount != 0)
-                    //{
-                    //    maybeCost += (chipCount * 1f / generatorCount)/10;
-                    //}
                 }
                 return (float)maybeCost;
             }
@@ -383,7 +381,7 @@ namespace AdventOfCode2016.Days
                 elevatorPosition = 1
             };
             int minCost = aStar.GetMinimumCost(startState, verbose:true);
-            return minCost;
+            return minCost; //33, runtime 1:42:21
         }
     }
 }
