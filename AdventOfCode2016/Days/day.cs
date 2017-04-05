@@ -17,7 +17,7 @@ namespace AdventOfCode2016.Days
         protected List<string> InputLines;
         private readonly int number;
 
-        private static Dictionary<int, Dictionary<string, TimeSpan>> solutionTimes = new Dictionary<int, Dictionary<string, TimeSpan>>();
+        private static Dictionary<int, List<Dictionary<string, TimeSpan>>> solutionTimes = new Dictionary<int, List<Dictionary<string, TimeSpan>>>();
 
         private object SolutionPart1
         {
@@ -102,11 +102,13 @@ namespace AdventOfCode2016.Days
             string filePath = TimeExportFolder + "\\" + filename;
 
             string fileContent = "Day Number;Part 1;Part 2;Total\n";
-            foreach (KeyValuePair<int, Dictionary<string, TimeSpan>> solutionTime in solutionTimes)
+            foreach (KeyValuePair<int, List<Dictionary<string, TimeSpan>>> solutionTime in solutionTimes)
             {
-                fileContent += $"{solutionTime.Key};{solutionTime.Value["Part1"]};{solutionTime.Value["Part2"]};{solutionTime.Value["Total"]}\n";
+                foreach (Dictionary<string, TimeSpan> uniqueRun in solutionTime.Value)
+                {
+                    fileContent += $"{solutionTime.Key};{uniqueRun["Part1"]};{uniqueRun["Part2"]};{uniqueRun["Total"]}\n";
+                }
             }
-
             File.WriteAllText(filePath, fileContent, Encoding.UTF8);
         }
 
@@ -136,7 +138,7 @@ namespace AdventOfCode2016.Days
             
         }
 
-        public static void RunDay(int number, Day dayInstance = null, bool batch = false, bool verbose = true)
+        public static void RunDay(int number, Day dayInstance = null, bool batch = false, bool verbose = true, int times = 1)
         {
             if (dayInstance == null)
             {
@@ -148,64 +150,73 @@ namespace AdventOfCode2016.Days
                 dayInstance = (Day) Activator.CreateInstance(dayType);
             }
 
-            var sw = new Stopwatch();
-            
-            sw.Start();
-            object solution1 = dayInstance.GetSolutionPart1();
-            sw.Stop();
-            if (dayInstance.solutionPart1 == null)
-            {
-                dayInstance.solutionPart1 = solution1;
-                dayInstance.solutionTime1 = sw.Elapsed;
-            }
-            
-            
-            //dayInstance.WriteToFile();
-            if (verbose)
-            {
-                Console.WriteLine($"day {dayInstance.number} part 1 : {dayInstance.SolutionPart1} - solved in {dayInstance.solutionTime1.TotalSeconds} seconds ({dayInstance.solutionTime1.TotalMilliseconds} milliseconds)");
-            }
-            try
-            {
-                dayInstance.WriteToFile(1);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
 
-            sw.Restart();
-            object solution2 = dayInstance.GetSolutionPart2();
-            sw.Stop();
-
-            if (dayInstance.solutionPart2 == null)
+            for (int i = 0; i < times; i++)
             {
-                dayInstance.solutionPart2 = solution2;
-                dayInstance.solutionTime2 = sw.Elapsed;
-            }
+                var sw = new Stopwatch();
+            
+                sw.Start();
+                object solution1 = dayInstance.GetSolutionPart1();
+                sw.Stop();
+                if (dayInstance.solutionPart1 == null)
+                {
+                    dayInstance.solutionPart1 = solution1;
+                    dayInstance.solutionTime1 = sw.Elapsed;
+                }
             
             
-            if (verbose)
-            {
-                Console.WriteLine($"day {dayInstance.number} part 2 : {dayInstance.SolutionPart2} - solved in {dayInstance.solutionTime2.TotalSeconds} seconds ({dayInstance.solutionTime2.TotalMilliseconds} milliseconds)");
-                Console.WriteLine($"total time: {dayInstance.TotalTime.TotalSeconds} seconds ({dayInstance.TotalTime.TotalMilliseconds} milliseconds)");
-            }
+                //dayInstance.WriteToFile();
+                if (verbose)
+                {
+                    Console.WriteLine($"day {dayInstance.number} part 1 : {dayInstance.SolutionPart1} - solved in {dayInstance.solutionTime1.TotalSeconds} seconds ({dayInstance.solutionTime1.TotalMilliseconds} milliseconds)");
+                }
+                try
+                {
+                    dayInstance.WriteToFile(1);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
 
-            try
-            {
-                dayInstance.WriteToFile(2);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-            }
+                sw.Restart();
+                object solution2 = dayInstance.GetSolutionPart2();
+                sw.Stop();
 
-            solutionTimes[number] = new Dictionary<string, TimeSpan>
-                                    {
-                                        {"Total", dayInstance.TotalTime},
-                                        {"Part1", dayInstance.solutionTime1},
-                                        {"Part2", dayInstance.solutionTime2}
-                                    };
+                if (dayInstance.solutionPart2 == null)
+                {
+                    dayInstance.solutionPart2 = solution2;
+                    dayInstance.solutionTime2 = sw.Elapsed;
+                }
+            
+            
+                if (verbose)
+                {
+                    Console.WriteLine($"day {dayInstance.number} part 2 : {dayInstance.SolutionPart2} - solved in {dayInstance.solutionTime2.TotalSeconds} seconds ({dayInstance.solutionTime2.TotalMilliseconds} milliseconds)");
+                    Console.WriteLine($"total time: {dayInstance.TotalTime.TotalSeconds} seconds ({dayInstance.TotalTime.TotalMilliseconds} milliseconds)");
+                }
+
+                try
+                {
+                    dayInstance.WriteToFile(2);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+
+                var run = new Dictionary<string, TimeSpan>
+                {
+                    {"Total", dayInstance.TotalTime},
+                    {"Part1", dayInstance.solutionTime1},
+                    {"Part2", dayInstance.solutionTime2}
+                };
+                if (!solutionTimes.ContainsKey(number))
+                {
+                    solutionTimes[number] = new List<Dictionary<string, TimeSpan>>();
+                }
+                solutionTimes[number].Add(run);
+            }
             
             if (!batch)
             {
