@@ -148,20 +148,43 @@ namespace AdventOfCode2016.Days
                 return actions;
             }
 
+
             public bool Equals(ISearchNode otherState)
             {
                 GameState other = otherState as GameState;
-
+                
                 if (other.elevatorPosition != elevatorPosition)
                 {
                     return false;
                 }
                 for (int i = 1; i <= 4; i++)
                 {
-                    if (!other.floors[i].SequenceEqual(floors[i]))
+                    if (floors[i].Count != other.floors[i].Count)
                     {
                         return false;
                     }
+
+
+                    //for our purposes, we don't care about the specific items. having "CM,CG,PM,PG" is essentially the same state as "DM,DG,BM,BG" as we only care about the number of microchips, generators and their relations.
+                    int microchipCount = floors[i].Count(s => s.EndsWith("M"));
+                    int otherMicrochipCount = other.floors[i].Count(s => s.EndsWith("M"));
+
+                    if (microchipCount != otherMicrochipCount)
+                    {
+                        return false;
+                    }
+
+                    int generatorCount = floors[i].Count(s => s.EndsWith("G"));
+                    int otherGeneratorCount = other.floors[i].Count(s => s.EndsWith("G"));
+
+                    if (generatorCount != otherGeneratorCount)
+                    {
+                        return false;
+                    }
+                    //if (!other.floors[i].SequenceEqual(floors[i]))
+                    //{
+                    //    return false;
+                    //}
                 }
                 return true;
             }
@@ -339,6 +362,7 @@ namespace AdventOfCode2016.Days
                 */
 #endregion
 
+            //return 33; //skip this part while working on part 2
             var aStar = new AStar();
             
             var testState = new GameState
@@ -381,7 +405,43 @@ namespace AdventOfCode2016.Days
                 elevatorPosition = 1
             };
             int minCost = aStar.GetMinimumCost(startState, verbose:true);
-            return minCost; //33, runtime 1:42:21
+            return minCost; //33
+        }
+
+        protected override object GetSolutionPart2()
+        {
+            /*
+             * You step into the cleanroom separating the lobby from the isolated area and put on the hazmat suit.
+
+                Upon entering the isolated containment area, however, you notice some extra parts on the first floor that weren't listed on the record outside:
+
+                    An elerium generator.
+                    An elerium-compatible microchip.
+                    A dilithium generator.
+                    A dilithium-compatible microchip.
+
+                These work just like the other generators and microchips. You'll have to get them up to assembly as well.
+
+                What is the minimum number of steps required to bring all of the objects, including these four new ones, to the fourth floor?
+             */
+
+            var startState = new GameState
+            {
+                Actions = new List<object>(),
+                Cost = 0,
+                floors = new Dictionary<int, List<string>> {
+                    { 1, new List<string> {"PrG", "PrM", "EG", "EM", "DG", "DM"} },
+                    { 2, new List<string> {"CoG", "CuG", "RuG", "PlG"} },
+                    { 3, new List<string> {"CoM", "CuM", "RuM", "PlM"} },
+                    { 4, new List<string>()},
+                },
+                elevatorPosition = 1
+            };
+
+            var aStar = new AStar();
+
+            int minCost = aStar.GetMinimumCost(startState, verbose: true);
+            return minCost; //57
         }
     }
 }
