@@ -20,6 +20,31 @@ namespace AdventOfCode2016.Days
                 public List<string> items;
             }
 
+            private long numericHash;
+            private string hash;
+            public string StringHash {
+                get //todo: move this getter into abstract class default implementation
+                {
+                    if (hash == null)
+                    {
+                        CreateHash();
+                    }
+                    return hash;
+                }
+            }
+
+            public long NumericHash
+            {
+                get //todo: move this getter into abstract class default implementation
+                {
+                    if (hash == null)
+                    {
+                        CreateHash();
+                    }
+                    return numericHash;
+                }
+            }
+            
             public int Cost { get; set; }
             public List<object> Actions { get; set; }
             public string VerboseInfo => $"Floor 1:{floors[1].Count}  \nFloor 2:{floors[2].Count}  \nFloor 3:{floors[3].Count}  \nFloor 4:{floors[4].Count}  \n";
@@ -28,6 +53,16 @@ namespace AdventOfCode2016.Days
             public int elevatorPosition = 1;
 
             public Dictionary<int, List<string>> floors = new Dictionary<int, List<string>>();
+
+            public void CreateHash()
+            {
+                hash = elevatorPosition.ToString();
+                for (int i = 1; i <= 4; i++)
+                {
+                    hash += string.Concat(floors[i].Count, floors[i].Count(s => s.EndsWith("M")), floors[i].Count(s => s.EndsWith("G")));
+                }
+                numericHash = long.Parse(string.Concat(1, hash));
+            }
 
             private void Move(int startFloor, int targetFloor, params string[] things)
             {
@@ -117,18 +152,20 @@ namespace AdventOfCode2016.Days
                 int startFloor = elevatorPosition;
                 int[] targetFloors = {elevatorPosition - 1, elevatorPosition + 1};
                 HashSet<ExpandAction> actions = new HashSet<ExpandAction>();
-                foreach (int targetFloor in targetFloors)
+                for (int index = 0; index < targetFloors.Length; index++)
                 {
+                    int targetFloor = targetFloors[index];
                     if (targetFloor < 1 || targetFloor > 4)
                     {
                         continue;
                     }
-                    
+
                     List<List<string>> itemCombos = floors[startFloor].DifferentCombinations(2).Select(c => c.ToList()).ToList();
                     itemCombos.AddRange(floors[startFloor].Select(s => new List<string> {s}));
 
-                    foreach (List<string> itemCombo in itemCombos)
+                    for (int i = 0; i < itemCombos.Count; i++)
                     {
+                        List<string> itemCombo = itemCombos[i];
                         GameState newState = Clone();
 
                         newState.Move(startFloor, targetFloor, itemCombo.ToArray());
@@ -142,7 +179,12 @@ namespace AdventOfCode2016.Days
                         //}
                         newState.floors[startFloor].Sort();
                         newState.floors[targetFloor].Sort();
-                        actions.Add(new ExpandAction {Cost = 1, Action = new Action {startFloor = startFloor, endFloor = targetFloor, items = new List<string>(itemCombo)}, Result = newState});
+                        actions.Add(new ExpandAction
+                        {
+                            Cost = 1,
+                            Action = new Action {startFloor = startFloor, endFloor = targetFloor, items = new List<string>(itemCombo)},
+                            Result = newState
+                        });
                     }
                 }
                 return actions;
@@ -151,42 +193,7 @@ namespace AdventOfCode2016.Days
 
             public bool Equals(ISearchNode otherState)
             {
-                GameState other = otherState as GameState;
-                
-                if (other.elevatorPosition != elevatorPosition)
-                {
-                    return false;
-                }
-                for (int i = 1; i <= 4; i++)
-                {
-                    if (floors[i].Count != other.floors[i].Count)
-                    {
-                        return false;
-                    }
-
-
-                    //for our purposes, we don't care about the specific items. having "CM,CG,PM,PG" is essentially the same state as "DM,DG,BM,BG" as we only care about the number of microchips, generators and their relations.
-                    int microchipCount = floors[i].Count(s => s.EndsWith("M"));
-                    int otherMicrochipCount = other.floors[i].Count(s => s.EndsWith("M"));
-
-                    if (microchipCount != otherMicrochipCount)
-                    {
-                        return false;
-                    }
-
-                    int generatorCount = floors[i].Count(s => s.EndsWith("G"));
-                    int otherGeneratorCount = other.floors[i].Count(s => s.EndsWith("G"));
-
-                    if (generatorCount != otherGeneratorCount)
-                    {
-                        return false;
-                    }
-                    //if (!other.floors[i].SequenceEqual(floors[i]))
-                    //{
-                    //    return false;
-                    //}
-                }
-                return true;
+                return NumericHash == (otherState as GameState).NumericHash;
             }
 
             public bool IsGoalState(ISearchNode goalState = null)
@@ -404,7 +411,7 @@ namespace AdventOfCode2016.Days
                 },
                 elevatorPosition = 1
             };
-            int minCost = aStar.GetMinimumCost(startState, verbose:true);
+            int minCost = aStar.GetMinimumCost(startState, verbose:false);
             return minCost; //33
         }
 
@@ -424,7 +431,7 @@ namespace AdventOfCode2016.Days
 
                 What is the minimum number of steps required to bring all of the objects, including these four new ones, to the fourth floor?
              */
-
+            GC.Collect();
             var startState = new GameState
             {
                 Actions = new List<object>(),
@@ -440,7 +447,7 @@ namespace AdventOfCode2016.Days
 
             var aStar = new AStar();
 
-            int minCost = aStar.GetMinimumCost(startState, verbose: true);
+            int minCost = aStar.GetMinimumCost(startState, verbose: false);
             return minCost; //57
         }
     }

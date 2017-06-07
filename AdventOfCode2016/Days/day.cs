@@ -124,7 +124,7 @@ namespace AdventOfCode2016.Days
 
             string solution = part == 1 ? SolutionPart1.ToString() : SolutionPart2.ToString();
             TimeSpan solutionTime = part == 1 ? solutionTime1 : solutionTime2;
-            string fileContent = $"Day {number} - Part {part}: {solution} (solved in {solutionTime} seconds / {solutionTime}, saved at {DateTime.Now:yyyy-MM-dd_HH-mm-ss})\n";
+            string fileContent = $"Day {number} - Part {part}: {solution} (solved in {solutionTime.TotalSeconds} seconds / {solutionTime}, saved at {DateTime.Now:yyyy-MM-dd_HH-mm-ss})\n";
             
             if (append)
             {
