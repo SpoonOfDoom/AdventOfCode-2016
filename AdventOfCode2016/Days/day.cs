@@ -9,6 +9,12 @@ namespace AdventOfCode2016.Days
 {
     public abstract class Day
     {
+#if DEBUG
+        private const string Configuration = "Debug";
+#else
+        private const string Configuration = "Release";
+#endif
+
         private const string TimeExportFolder = "exports";
         protected object solutionPart1, solutionPart2;
         protected TimeSpan solutionTime1, solutionTime2;
@@ -100,13 +106,14 @@ namespace AdventOfCode2016.Days
                 filename += DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".csv";
             }
             string filePath = TimeExportFolder + "\\" + filename;
+            string fileContent = "Machine Name;Build Configuration;Day Number;Part 1;Part 2;Total\n";
 
-            string fileContent = "Day Number;Part 1;Part 2;Total\n";
+
             foreach (KeyValuePair<int, List<Dictionary<string, TimeSpan>>> solutionTime in solutionTimes)
             {
                 foreach (Dictionary<string, TimeSpan> uniqueRun in solutionTime.Value)
                 {
-                    fileContent += $"{solutionTime.Key};{uniqueRun["Part1"]};{uniqueRun["Part2"]};{uniqueRun["Total"]}\n";
+                    fileContent += $"{Environment.MachineName};{Configuration};{solutionTime.Key};{uniqueRun["Part1"]};{uniqueRun["Part2"]};{uniqueRun["Total"]}\n";
                 }
             }
             File.WriteAllText(filePath, fileContent, Encoding.UTF8);
@@ -119,13 +126,14 @@ namespace AdventOfCode2016.Days
                 Directory.CreateDirectory(TimeExportFolder);
             }
             string filename = "day_" + number + ".log";
-            
+
             string filePath = TimeExportFolder + "\\" + filename;
 
             string solution = part == 1 ? SolutionPart1.ToString() : SolutionPart2.ToString();
             TimeSpan solutionTime = part == 1 ? solutionTime1 : solutionTime2;
-            string fileContent = $"Day {number} - Part {part}: {solution} (solved in {solutionTime.TotalSeconds} seconds / {solutionTime}, saved at {DateTime.Now:yyyy-MM-dd_HH-mm-ss})\n";
-            
+
+            string fileContent = $"{Environment.MachineName}|{Configuration}\\Day {number} - Part {part}: {solution} (solved in {solutionTime.TotalSeconds} seconds / {solutionTime}, saved at {DateTime.Now:yyyy-MM-dd_HH-mm-ss})\n";
+
             if (append)
             {
                 File.AppendAllText(filePath, fileContent, Encoding.UTF8);
@@ -134,8 +142,8 @@ namespace AdventOfCode2016.Days
             {
                 File.WriteAllText(filePath, fileContent, Encoding.UTF8);
             }
-            
-            
+
+
         }
 
         public static void RunDay(int number, Day dayInstance = null, bool batch = false, bool verbose = true, int times = 1)
@@ -147,14 +155,14 @@ namespace AdventOfCode2016.Days
                 {
                     throw new Exception("Couldn't find type AdventOfCode2016.Days.Day" + number);
                 }
-                dayInstance = (Day) Activator.CreateInstance(dayType);
+                dayInstance = (Day)Activator.CreateInstance(dayType);
             }
 
 
             for (int i = 0; i < times; i++)
             {
                 var sw = new Stopwatch();
-            
+
                 sw.Start();
                 object solution1 = dayInstance.GetSolutionPart1();
                 sw.Stop();
@@ -163,8 +171,8 @@ namespace AdventOfCode2016.Days
                     dayInstance.solutionPart1 = solution1;
                     dayInstance.solutionTime1 = sw.Elapsed;
                 }
-            
-            
+
+
                 //dayInstance.WriteToFile();
                 if (verbose)
                 {
@@ -188,8 +196,8 @@ namespace AdventOfCode2016.Days
                     dayInstance.solutionPart2 = solution2;
                     dayInstance.solutionTime2 = sw.Elapsed;
                 }
-            
-            
+
+
                 if (verbose)
                 {
                     Console.WriteLine($"day {dayInstance.number} part 2 : {dayInstance.SolutionPart2} - solved in {dayInstance.solutionTime2.TotalSeconds} seconds ({dayInstance.solutionTime2.TotalMilliseconds} milliseconds)");
@@ -217,7 +225,7 @@ namespace AdventOfCode2016.Days
                 }
                 solutionTimes[number].Add(run);
             }
-            
+
             if (!batch)
             {
                 Console.Read();
