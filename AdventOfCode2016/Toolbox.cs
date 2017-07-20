@@ -15,7 +15,7 @@ namespace AdventOfCode2016
             byte[] bytes = input.Select(Convert.ToByte).ToArray();
             byte[] hashedBytes = md5.ComputeHash(bytes);
 
-            return hashedBytes.ToString();
+            return string.Join("", hashedBytes.Select(b => b.ToString("x2")));
         }
     }
 }
