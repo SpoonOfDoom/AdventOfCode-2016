@@ -10,7 +10,7 @@ namespace AdventOfCode2016.Days
     // ReSharper disable once UnusedMember.Global
     class Day14 : Day
     {
-        private class Candidate
+        class Candidate
         {
             private const int CandidateIndexRange = 1000;
             public int StartIndex;
@@ -18,10 +18,10 @@ namespace AdventOfCode2016.Days
             public bool Valid;
             public int StopIndex => StartIndex + CandidateIndexRange;
 
-            private string StartHash;
+            public string StartHash;
         }
 
-        public Day14() : base(14) { }
+        public Day14() : base(14) {}
 
         private const int targetIndex = 64;
         private MD5Digest md5 = new MD5Digest();
@@ -34,7 +34,7 @@ namespace AdventOfCode2016.Days
             return Toolbox.GetHashString(input, md5);
         }
 
-
+        
         private string GetTripleCharacters(string hashString)
         {
             List<string> characters = new List<string>();
@@ -76,7 +76,7 @@ namespace AdventOfCode2016.Days
                 {
                     hash = GetHash(hash);
                 }
-
+                
                 string triple = GetTripleCharacters(hash);
                 List<string> quintuples = GetQuintupleCharacters(hash);
 
@@ -92,7 +92,8 @@ namespace AdventOfCode2016.Days
                     candidates.Add(new Candidate
                     {
                         Character = triple,
-                        StartIndex = i
+                        StartIndex = i,
+                        StartHash = hash
                     });
                 }
 
