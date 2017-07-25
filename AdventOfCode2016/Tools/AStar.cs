@@ -182,7 +182,7 @@ namespace AdventOfCode2016.Tools
                 step++;
                 current = openQueue.Dequeue();
 
-                if (current.IsGoalState(current))
+                if (current.IsGoalState(goalState))
                 {
                     return Tuple.Create(current.Actions, current.Cost);
                 }
