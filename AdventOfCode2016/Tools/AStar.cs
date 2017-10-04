@@ -6,6 +6,13 @@ using Priority_Queue;
 
 namespace AdventOfCode2016.Tools
 {
+    public class SearchEventArgs : EventArgs
+    {
+        public ISearchNode ProcessedNode;
+        public SimplePriorityQueue<ISearchNode> OpenQueue;
+        public HashSet<ISearchNode> ClosedSet;
+    }
+
     public interface ISearchNode //todo: convert to abstract class and provide default implementations of methods
     {
         //todo: introduce bool numericHashMode to control whether to use string or numeric hash in default Equals implementation
@@ -106,11 +113,14 @@ namespace AdventOfCode2016.Tools
             }
         }
     }
-
+    
     public struct ExpandAction
     {
         public ISearchNode Result;
         public object Action; //todo: make "Action" interface/abstract class so we can grab the cost and other data from them
+        /// <summary>
+        /// The cost of taking this step (not total cost)
+        /// </summary>
         public int Cost;
     }
 
@@ -147,20 +157,20 @@ namespace AdventOfCode2016.Tools
             HashingMode = hashingMode;
         }
 
-        public int GetMinimumCost(ISearchNode startState, ISearchNode goalState = null, bool verbose = false)
+        public int GetMinimumCost(ISearchNode startState, ISearchNode goalState = null, bool verbose = false, bool stepByStep = false)
         {
-            Tuple<List<object>, int> path = GetOptimalPath(startState, goalState, verbose);
+            Tuple<List<object>, int> path = GetOptimalPath(startState, goalState, verbose, stepByStep);
             return path.Item2;
         }
 
-        public int GetMinimumCost(SearchNode startState, SearchNode goalState = null, bool verbose = false)
+        public int GetMinimumCost(SearchNode startState, SearchNode goalState = null, bool verbose = false, bool stepByStep = false)
         {
             Tuple<List<object>, int> path = GetOptimalPath(startState, goalState, verbose);
             return path.Item2;
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public Tuple<List<object>, int> GetOptimalPath(ISearchNode startState, ISearchNode goalState = null, bool verbose = false)
+        public Tuple<List<object>, int> GetOptimalPath(ISearchNode startState, ISearchNode goalState = null, bool verbose = false, bool stepByStep = false)
         {
             if (verbose)
             {
@@ -186,16 +196,17 @@ namespace AdventOfCode2016.Tools
                 {
                     return Tuple.Create(current.Actions, current.Cost);
                 }
-                closedSet.Add(current);
-
-
                 expandActions = current.ExpandNode();
-
+                closedSet.Add(current);
+                
                 if (verbose)
                 {
                     OutputVerboseInfo(goalState, searchWatch, step, current);
+                    if (stepByStep)
+                    {
+                        Console.ReadLine();
+                    }
                 }
-
 
                 foreach (ExpandAction expandAction in expandActions)
                 {
@@ -219,9 +230,85 @@ namespace AdventOfCode2016.Tools
                         openQueue.Enqueue(newNode, newNode.Cost + newNode.GetHeuristic(goalState));
                     }
                 }
+                OnSearchNodeProcessed(new SearchEventArgs
+                {
+                    ProcessedNode = current,
+                    ClosedSet = closedSet,
+                    OpenQueue = openQueue
+                });
             }
 
             return Tuple.Create(new List<object>(), -1);
+        }
+
+        public event EventHandler SearchNodeProcessed;
+
+
+        
+
+        public Tuple<List<object>, int> GetLongestPath(ISearchNode startState, ISearchNode goalState = null, bool verbose = false)
+        {
+            if (verbose)
+            {
+                Console.Clear();
+            }
+            Stopwatch searchWatch = new Stopwatch();
+            searchWatch.Start();
+            openQueue = new SimplePriorityQueue<ISearchNode>();
+            closedSet = new HashSet<ISearchNode>();
+
+            openQueue.Enqueue(startState, 0);
+            long step = 0;
+            ISearchNode current;
+            HashSet<ExpandAction> expandActions;
+            ISearchNode newNode;
+            ISearchNode match;
+            var targetCandidates = new List<Tuple<List<object>, int>>();
+            while (openQueue.Count > 0)
+            {
+                step++;
+                current = openQueue.Dequeue();
+
+                closedSet.Add(current);
+                if (current.IsGoalState(goalState))
+                {
+                    //todo: this can probably be optimized to work more like standard A*, but negating Cost + Heuristic wasn't enough and this is probably the next best thing. Or at least it's the next thing I came up with.
+                    targetCandidates.Add(Tuple.Create(current.Actions, current.Cost));
+                    continue;
+                }
+                
+                expandActions = current.ExpandNode();
+
+                if (verbose)
+                {
+                    OutputVerboseInfo(goalState, searchWatch, step, current);
+                }
+
+                foreach (ExpandAction expandAction in expandActions)
+                {
+                    newNode = expandAction.Result;
+                    newNode.Cost = current.Cost + expandAction.Cost;
+                    newNode.Actions.Add(expandAction.Action);
+                    if (closedSet.Any(x => x.Equals(newNode)))
+                    {
+                        continue;
+                    }
+                    match = openQueue.SingleOrDefault(x => x.Equals(newNode));
+                    if (match != default(ISearchNode))
+                    {
+                        if (match.Cost < newNode.Cost)
+                        {
+                            openQueue.UpdatePriority(match, -1 * (newNode.Cost + newNode.GetHeuristic(goalState)));
+                        }
+                    }
+                    else
+                    {
+                        openQueue.Enqueue(newNode, -1 * (newNode.Cost + newNode.GetHeuristic(goalState)));
+                    }
+                }
+            }
+
+            return targetCandidates.OrderByDescending(c => c.Item2).First();
         }
 
         public Tuple<List<object>, int> GetOptimalPath(SearchNode startState, SearchNode goalState = null, bool verbose = false)
@@ -304,7 +391,7 @@ namespace AdventOfCode2016.Tools
             }
             Console.WriteLine($"Step: {step}   ");
             Console.WriteLine("Time: {0}:{1}:{2}.{3}   ", searchWatch.Elapsed.Hours, searchWatch.Elapsed.Minutes, searchWatch.Elapsed.Seconds, searchWatch.Elapsed.Milliseconds);
-
+            Console.WriteLine("Closed/Open Ratio: " + 1.0f * closedSet.Count / openQueue.Count);
             Console.WriteLine(current.VerboseInfo);
         }
 
@@ -327,6 +414,11 @@ namespace AdventOfCode2016.Tools
             Console.WriteLine("Time: {0}:{1}:{2}.{3}   ", searchWatch.Elapsed.Hours, searchWatch.Elapsed.Minutes, searchWatch.Elapsed.Seconds, searchWatch.Elapsed.Milliseconds);
 
             Console.WriteLine(current.VerboseInfo);
+        }
+
+        protected virtual void OnSearchNodeProcessed(SearchEventArgs e)
+        {
+            SearchNodeProcessed?.Invoke(this, e);
         }
     }
 }

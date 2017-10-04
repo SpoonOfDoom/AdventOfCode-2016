@@ -159,7 +159,7 @@ namespace AdventOfCode2016.Days
 
             public void CreateHash()
             {
-                stringHash = string.Concat(Position.ToString(), "$", roomHash);
+                stringHash = string.Concat(Position.ToString(), "$", RoomHash);
             }
 
             public GameState CloneAndMove(Direction direction)
@@ -225,8 +225,6 @@ namespace AdventOfCode2016.Days
                         With ulqzkmiv, the shortest would be DRURDRUDDLLDLUURRDULRLDUUDDDRR.
 
                     Given your vault's passcode, what is the shortest path (the actual path, not just the length) to reach the vault?
-
-                    Your puzzle input is pxxbnzuo.
                     */
 
             AStar aStar = new AStar(AStar.NodeHashMode.String);
@@ -246,17 +244,6 @@ namespace AdventOfCode2016.Days
             string result;
 
             #region TestRuns
-
-            //GameState.PassCode = "hijkl";
-            //var test = startState.RoomHash;
-            //if (!test.StartsWith("ced9"))
-            //{
-            //    throw new Exception("Test 0 failed, roomhash expected: ced9, actual: " + test);
-            //}
-            //path = aStar.GetOptimalPath(startState, goalState);
-            //actions = path.Item1.Select(x => ((GameState.Direction)x).ToString()).ToList();
-            //result = string.Join("", actions);
-
             GameState.PassCode = "ihgpwlah";
             startState = new GameState
             {
@@ -331,7 +318,112 @@ namespace AdventOfCode2016.Days
             path = aStar.GetOptimalPath(startState, goalState);
             actions = path.Item1.Select(x => ((GameState.Direction) x).ToString()).ToList();
             result = string.Join("", actions);
-            return result;
+            return result; //RDULRDDRRD
+        }
+
+        protected override object GetSolutionPart2()
+        {
+            /*
+             * You're curious how robust this security solution really is, and so you decide to find longer and longer paths which still provide access to the vault.
+             * You remember that paths always end the first time they reach the bottom-right room (that is, they can never pass through it, only end in it).
+
+                For example:
+
+                    If your passcode were ihgpwlah, the longest path would take 370 steps.
+                    With kglvqrro, the longest path would be 492 steps long.
+                    With ulqzkmiv, the longest path would be 830 steps long.
+
+                What is the length of the longest path that reaches the vault?
+             */
+
+            //todo: improve execution time
+            AStar aStar = new AStar(AStar.NodeHashMode.String);
+
+            GameState startState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 0, Y = 0 },
+                Actions = new List<object>()
+            };
+            GameState goalState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 3, Y = 3 },
+                Actions = new List<object>()
+            };
+            Tuple<List<object>, int> path;
+            int result;
+
+            #region TestRuns
+            GameState.PassCode = "ihgpwlah";
+            startState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 0, Y = 0 },
+                Actions = new List<object>()
+            };
+            goalState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 3, Y = 3 },
+                Actions = new List<object>()
+            };
+            path = aStar.GetLongestPath(startState, goalState);
+            result = path.Item2;
+            if (result != 370)
+            {
+                throw new Exception("Test 1 failed. Expected: 370, actual: " + result);
+            }
+
+            GameState.PassCode = "kglvqrro";
+            startState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 0, Y = 0 },
+                Actions = new List<object>()
+            };
+            goalState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 3, Y = 3 },
+                Actions = new List<object>()
+            };
+            path = aStar.GetLongestPath(startState, goalState);
+            result = path.Item2;
+            if (result != 492)
+            {
+                throw new Exception("Test 2 failed. Expected: 492, actual: " + result);
+            }
+
+            GameState.PassCode = "ulqzkmiv";
+            startState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 0, Y = 0 },
+                Actions = new List<object>()
+            };
+            goalState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 3, Y = 3 },
+                Actions = new List<object>()
+            };
+            path = aStar.GetLongestPath(startState, goalState);
+            result = path.Item2;
+            if (result != 830)
+            {
+                throw new Exception("Test 3 failed. Expected: 830, actual: " + result);
+            }
+
+            #endregion
+
+
+            GameState.PassCode = Input;
+            startState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 0, Y = 0 },
+                Actions = new List<object>()
+            };
+            goalState = new GameState
+            {
+                Position = new GameState.RoomCoordinates { X = 3, Y = 3 },
+                Actions = new List<object>()
+            };
+            path = aStar.GetLongestPath(startState, goalState);
+            result = path.Item2;
+            return result; //752
         }
     }
 }
