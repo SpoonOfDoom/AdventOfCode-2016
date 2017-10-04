@@ -18,6 +18,11 @@ namespace AdventOfCode2016.Extensions
             return int.Parse(s);
         }
 
+        public static long ToLong(this string s)
+        {
+            return long.Parse(s);
+        }
+
         public static string Md5Hash(this string s, MD5CryptoServiceProvider md5 = null)
         {
 	        if (md5 == null)

@@ -17,5 +17,10 @@ namespace AdventOfCode2016
 
             return string.Join("", hashedBytes.Select(b => b.ToString("x2")));
         }
+
+        public static int GetManhattanDistance(int x1, int x2, int y1, int y2)
+        {
+            return Math.Abs(x2 - x1) + Math.Abs(y2 - y1);
+        }
     }
 }

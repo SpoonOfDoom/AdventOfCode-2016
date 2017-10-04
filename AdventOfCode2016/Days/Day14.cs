@@ -182,8 +182,6 @@ namespace AdventOfCode2016.Days
                     Eventually, index 22551 produces the 64th key (triple fff with matching fffff at index 22859.
 
                 Given the actual salt in your puzzle input and using 2016 extra MD5 calls of key stretching, what index now produces your 64th one-time pad key?
-
-                Your puzzle input is still cuanljph.
              */
 
             candidates.Clear();
