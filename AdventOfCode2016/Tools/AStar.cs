@@ -8,11 +8,12 @@ namespace AdventOfCode2016.Tools
 {
     public class SearchEventArgs : EventArgs
     {
-        public ISearchNode ProcessedNode;
         public SimplePriorityQueue<ISearchNode> OpenQueue;
         public HashSet<ISearchNode> ClosedSet;
+        public ISearchNode CurrentNode;
+        public ISearchNode GoalNode;
     }
-
+    
     public interface ISearchNode //todo: convert to abstract class and provide default implementations of methods
     {
         //todo: introduce bool numericHashMode to control whether to use string or numeric hash in default Equals implementation
@@ -232,9 +233,9 @@ namespace AdventOfCode2016.Tools
                 }
                 OnSearchNodeProcessed(new SearchEventArgs
                 {
-                    ProcessedNode = current,
                     ClosedSet = closedSet,
-                    OpenQueue = openQueue
+                    OpenQueue = openQueue,
+                    CurrentNode = current
                 });
             }
 
@@ -242,8 +243,7 @@ namespace AdventOfCode2016.Tools
         }
 
         public event EventHandler SearchNodeProcessed;
-
-
+        public event EventHandler GeneralVerboseOutputPrinted;
         
 
         public Tuple<List<object>, int> GetLongestPath(ISearchNode startState, ISearchNode goalState = null, bool verbose = false)
@@ -393,6 +393,13 @@ namespace AdventOfCode2016.Tools
             Console.WriteLine("Time: {0}:{1}:{2}.{3}   ", searchWatch.Elapsed.Hours, searchWatch.Elapsed.Minutes, searchWatch.Elapsed.Seconds, searchWatch.Elapsed.Milliseconds);
             Console.WriteLine("Closed/Open Ratio: " + 1.0f * closedSet.Count / openQueue.Count);
             Console.WriteLine(current.VerboseInfo);
+            OnGeneralVerboseOutputPrinted(new SearchEventArgs
+            {
+                OpenQueue = openQueue,
+                ClosedSet = closedSet,
+                CurrentNode = current,
+                GoalNode = goalState
+            });
         }
 
         private void OutputVerboseInfo(SearchNode goalState, Stopwatch searchWatch, long step, SearchNode current)
@@ -412,13 +419,17 @@ namespace AdventOfCode2016.Tools
             }
             Console.WriteLine($"Step: {step}   ");
             Console.WriteLine("Time: {0}:{1}:{2}.{3}   ", searchWatch.Elapsed.Hours, searchWatch.Elapsed.Minutes, searchWatch.Elapsed.Seconds, searchWatch.Elapsed.Milliseconds);
-
             Console.WriteLine(current.VerboseInfo);
         }
 
         protected virtual void OnSearchNodeProcessed(SearchEventArgs e)
         {
             SearchNodeProcessed?.Invoke(this, e);
+        }
+
+        protected virtual void OnGeneralVerboseOutputPrinted(SearchEventArgs e)
+        {
+            GeneralVerboseOutputPrinted?.Invoke(this, e);
         }
     }
 }
